@@ -18,6 +18,7 @@ public class StatisticActivity extends AppCompatActivity {
         setContentView(R.layout.activity_statistic);
 
         chart = (LinearLayout) findViewById(R.id.chart);
+        init(this);
     }
 
     private void init(Context context) {
