@@ -42,9 +42,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     // 목록 정렬을 위해 만들었음.
     private TreeMap<Integer, String> freindMap = new TreeMap<>();
     public static final int RECOMMEND_REQUEST = 1;
-    private static final int PERMISSION_FINE_LOCATION = 101;
-    private static final int PERMISSION_COAST_LOCATION = 102;
-    private static final LatLng DEFAULT_ZOOM = new LatLng(37, 127);
+    private static final int PERMISSION_LOCATION = 101;
+    private static final LatLng DEFAULT_ZOOM = new LatLng(38.9, 124.5);
     private GoogleApiClient mGoogleApiClient = null;
     private GoogleMap googleMap = null;
     private Marker currentMarker = null;
@@ -57,9 +56,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        permissionCheck();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
         mapFragment.getMapAsync(this);
-        permissionCheck();
         setButtonClickListener();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //            LatLng myLocation = new LatLng(lat, lng);
 //            this.googleMap.addMarker(new MarkerOptions().position(myLocation).title("Marker in my location"));
 //            this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
-            setCurrentLocation(null, "나의 위치", "내 현재 위치");
+            setCurrentLocation(mLastKnownLocation, "나의 위치", "내 현재 위치");
         }
     }
 
@@ -183,34 +182,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void permissionCheck() {
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_FINE_LOCATION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_LOCATION);
         }
 
-        permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_COAST_LOCATION);
-        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
         switch (requestCode) {
-            case PERMISSION_FINE_LOCATION:
+            case PERMISSION_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(mContext, "Location 권한 승인", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(mContext, "권한 거부.", Toast.LENGTH_SHORT).show();
-                    finish();
+                    Toast.makeText(mContext, "Location 권한 없음", Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case PERMISSION_COAST_LOCATION:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(mContext, "Location 권한 승인", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(mContext, "권한 거부.", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                break;
+            default:
+                return;
+        }
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            finish();
         }
     }
 
