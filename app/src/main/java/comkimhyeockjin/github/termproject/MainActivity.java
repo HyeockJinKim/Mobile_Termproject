@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.Calendar;
 import java.util.TreeMap;
 
 /**
@@ -160,6 +161,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         dialog.setTitle("어디로 갈까?");
         dialog.setView(R.layout.ask_dialog);
 
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int min = calendar.get(Calendar.MINUTE);
+        Button timeBtn = (Button) findViewById(R.id.timeBtn);
+        Log.d("TimePicker", (timeBtn==null)?"null":timeBtn.getText().toString());
+        //버튼에 시간표시하려고 하는데 findViewById()로 못찾는거 같음.
+        //timeBtn.setText(hour+":"+min);
+
         dialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 Intent intent = new Intent(mContext, RecommendActivity.class);
@@ -178,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         dialog.show();
+
     }
 
     /**
