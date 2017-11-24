@@ -1,8 +1,8 @@
 package comkimhyeockjin.github.termproject;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -17,9 +17,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -132,7 +130,7 @@ public class StatisticActivity extends AppCompatActivity {
      */
     private void readLocationData() throws IOException {
         Map<String, Integer> tiemMap = new HashMap<>();
-        File dataFile = new File(filePath);
+//        File dataFile = new File(filePath);
 
     }
 
