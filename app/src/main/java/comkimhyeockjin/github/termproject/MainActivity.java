@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private TreeMap<Integer, String> freindMap = new TreeMap<>();
     public static final int RECOMMEND_REQUEST = 1;
     private static final int PERMISSION_LOCATION = 101;
-    private static final LatLng DEFAULT_ZOOM = new LatLng(38.9, 124.5);
+    private static final LatLng DEFAULT_ZOOM = new LatLng(35.9, 127.5);
     private GoogleApiClient mGoogleApiClient = null;
     private GoogleMap googleMap = null;
     private Marker currentMarker = null;
@@ -51,16 +51,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     double lat;
     double lng;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         permissionCheck();
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
-        mapFragment.getMapAsync(this);
         setButtonClickListener();
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */,
                         this /* OnConnectionFailedListener */)
@@ -115,8 +111,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //            LatLng myLocation = new LatLng(lat, lng);
 //            this.googleMap.addMarker(new MarkerOptions().position(myLocation).title("Marker in my location"));
 //            this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
-            setCurrentLocation(mLastKnownLocation, "나의 위치", "내 현재 위치");
+
         }
+        getDeviceLocation();
+        setCurrentLocation(mLastKnownLocation, "나의 위치", "내 현재 위치");
     }
 
 
@@ -124,12 +122,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      *
      */
     public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
-        if ( currentMarker != null ) currentMarker.remove();
+        if (currentMarker != null) currentMarker.remove();
 
-        if ( location != null) {
-            //현재위치의 위도 경도 가져옴
+        if (location != null) {
+            // 현재위치의 위도 경도 가져옴
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(currentLocation);
             markerOptions.title(markerTitle);
@@ -137,9 +134,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             markerOptions.draggable(true);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
             currentMarker = this.googleMap.addMarker(markerOptions);
-
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
-            return;
         } else {
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(DEFAULT_ZOOM);
@@ -152,6 +147,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_ZOOM));
         }
 
+    }
+
+    private void getDeviceLocation() {
+    /*
+     * Before getting the device location, you must check location
+     * permission, as described earlier in the tutorial. Then:
+     * Get the best and most recent location of the device, which may be
+     * null in rare cases when a location is not available.
+     */
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mLastKnownLocation = LocationServices.FusedLocationApi
+                .getLastLocation(mGoogleApiClient);
+
+
+        // Set the map's camera position to the current location of the device.
+        if (mLastKnownLocation != null) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(mLastKnownLocation.getLatitude(),
+                            mLastKnownLocation.getLongitude()), 0));
+        } else {
+            Log.d("MainActivity", "Current location is null. Using defaults.");
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_ZOOM, 0));
+            googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+        }
     }
 
     /**
@@ -219,9 +241,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+        mapFragment.getMapAsync(this);
     }
 
     @Override
