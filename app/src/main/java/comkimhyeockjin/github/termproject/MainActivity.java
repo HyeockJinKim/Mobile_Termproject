@@ -227,19 +227,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             case PERMISSION_FINE_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(mContext, "Location 권한 승인", Toast.LENGTH_SHORT).show();
-                    return ;
                 } else {
                     Toast.makeText(mContext, "권한 거부.", Toast.LENGTH_SHORT).show();
                     finish();
                 }
+                break;
             case PERMISSION_COAST_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(mContext, "Location 권한 승인", Toast.LENGTH_SHORT).show();
-                    return ;
                 } else {
                     Toast.makeText(mContext, "권한 거부.", Toast.LENGTH_SHORT).show();
                     finish();
                 }
+                break;
         }
     }
 
