@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap googleMap = null;
     private Marker currentMarker = null;
     Location mLastKnownLocation = null;
-    double lat;
-    double lng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,16 +99,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /**
-     * TODO : 현재 위치로 이동시켜
+     * map 실행하는 화면
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         if (mLastKnownLocation != null) {
-            Log.d("MainActivity", "longitude =" + lng + ", latitude=" + lat);
-//            LatLng myLocation = new LatLng(lat, lng);
-//            this.googleMap.addMarker(new MarkerOptions().position(myLocation).title("Marker in my location"));
-//            this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
+            Log.d("MainActivity", "longitude =" + mLastKnownLocation.getLongitude() + ", latitude=" + mLastKnownLocation.getLatitude());
 
         }
         getDeviceLocation();
@@ -119,19 +114,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     /**
-     *
+     *  입력받은 Location 에 마커를 찍고 카메라를 이동시켜줌.
      */
     public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
         if (currentMarker != null) currentMarker.remove();
 
         if (location != null) {
-            // 현재위치의 위도 경도 가져옴
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(currentLocation);
             markerOptions.title(markerTitle);
             markerOptions.snippet(markerSnippet);
-            markerOptions.draggable(true);
+            markerOptions.draggable(false);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
             currentMarker = this.googleMap.addMarker(markerOptions);
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
@@ -140,38 +134,32 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             markerOptions.position(DEFAULT_ZOOM);
             markerOptions.title(markerTitle);
             markerOptions.snippet(markerSnippet);
-            markerOptions.draggable(true);
+            markerOptions.draggable(false);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             currentMarker = this.googleMap.addMarker(markerOptions);
-
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_ZOOM));
         }
 
     }
 
-    private void getDeviceLocation() {
-    /*
-     * Before getting the device location, you must check location
-     * permission, as described earlier in the tutorial. Then:
-     * Get the best and most recent location of the device, which may be
-     * null in rare cases when a location is not available.
+    /**
+     *  현재 위치 값을 받아오는 함수.
      */
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+    private void getDeviceLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         mLastKnownLocation = LocationServices.FusedLocationApi
                 .getLastLocation(mGoogleApiClient);
 
-
-        // Set the map's camera position to the current location of the device.
         if (mLastKnownLocation != null) {
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mLastKnownLocation.getLatitude(),
-                            mLastKnownLocation.getLongitude()), 0));
+                            mLastKnownLocation.getLongitude()), 15)); // 15는 초기 zoom 값 (확대 값)
         } else {
             Log.d("MainActivity", "Current location is null. Using defaults.");
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_ZOOM, 0));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_ZOOM, 15));
             googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
     }
@@ -206,7 +194,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_LOCATION);
         }
-
     }
 
     @Override
