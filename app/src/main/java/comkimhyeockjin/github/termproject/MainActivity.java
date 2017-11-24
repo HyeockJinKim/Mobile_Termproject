@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -41,7 +39,7 @@ import java.util.TreeMap;
  */
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     Context mContext = this;
-
+    // 목록 정렬을 위해 만들었음.
     private TreeMap<Integer, String> freindMap = new TreeMap<>();
     public static final int RECOMMEND_REQUEST = 1;
     private static final int PERMISSION_FINE_LOCATION = 101;
@@ -50,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleApiClient mGoogleApiClient = null;
     private GoogleMap googleMap = null;
     private Marker currentMarker = null;
-    LocationManager locationManager = null;
     Location mLastKnownLocation = null;
     double lat;
     double lng;
@@ -63,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
         mapFragment.getMapAsync(this);
         permissionCheck();
-        checkMyLocation();
         setButtonClickListener();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -81,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void setButtonClickListener() {
         Button recommendBtn = (Button) findViewById(R.id.recommend);
         Button statisticBtn = (Button) findViewById(R.id.statistic);
+
+        // TODO : askSituation에서 Intent까지 처리하게 하자!
         recommendBtn.setOnClickListener(new View.OnClickListener() {
 
             /**
@@ -108,28 +106,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /**
-     * 현재 위치로 이동.
+     * TODO : 현재 위치로 이동시켜
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         this.googleMap = googleMap;
-
         if (mLastKnownLocation != null) {
             Log.d("MainActivity", "longitude =" + lng + ", latitude=" + lat);
-            LatLng myLocation = new LatLng(lat, lng);
-            this.googleMap.addMarker(new MarkerOptions().position(myLocation).title("Marker in my location"));
-            this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
+//            LatLng myLocation = new LatLng(lat, lng);
+//            this.googleMap.addMarker(new MarkerOptions().position(myLocation).title("Marker in my location"));
+//            this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
+            setCurrentLocation(null, "나의 위치", "내 현재 위치");
         }
-
     }
 
+
+    /**
+     *
+     */
     public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
         if ( currentMarker != null ) currentMarker.remove();
 
         if ( location != null) {
             //현재위치의 위도 경도 가져옴
-            LatLng currentLocation = new LatLng( location.getLatitude(), location.getLongitude());
+            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(currentLocation);
@@ -141,46 +141,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
             return;
+        } else {
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(DEFAULT_ZOOM);
+            markerOptions.title(markerTitle);
+            markerOptions.snippet(markerSnippet);
+            markerOptions.draggable(true);
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            currentMarker = this.googleMap.addMarker(markerOptions);
+
+            this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_ZOOM));
         }
 
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(DEFAULT_ZOOM);
-        markerOptions.title(markerTitle);
-        markerOptions.snippet(markerSnippet);
-        markerOptions.draggable(true);
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        currentMarker = this.googleMap.addMarker(markerOptions);
-
-        this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_ZOOM));
-    }
-
-    private LocationListener locationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            lat = location.getLatitude();
-            lng = location.getLongitude();
-            Log.d("MainActivity",  "longitude =" + lng + ", latitude=" + lat);
-        }
-
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-
-        public void onProviderEnabled(String provider) {
-        }
-
-        public void onProviderDisabled(String provider) {
-        }
-    };
-
-    private void checkMyLocation() {
-
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        mLastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
     }
 
     /**
@@ -198,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /**
-     * TODO TITLE이름.
+     * TODO 추천 버튼 눌렀을 때에 다이얼로그 띄워서 물어보는 부분.
      */
     private void askSituation() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
@@ -218,7 +190,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_COAST_LOCATION);
         }
-
     }
 
     @Override
@@ -255,7 +226,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
     }
 
     @Override
