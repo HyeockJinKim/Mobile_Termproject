@@ -2,6 +2,7 @@ package comkimhyeockjin.github.termproject;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -30,6 +31,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.Calendar;
 import java.util.TreeMap;
 
 /**
@@ -39,18 +41,21 @@ import java.util.TreeMap;
  */
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     Context mContext = this;
-    // 목록 정렬을 위해 만들었음.
-    private TreeMap<Integer, String> freindMap = new TreeMap<>();
     public static final int RECOMMEND_REQUEST = 1;
     private static final int PERMISSION_FINE_LOCATION = 101;
     private static final int PERMISSION_COAST_LOCATION = 102;
+
     private static final LatLng DEFAULT_ZOOM = new LatLng(37, 127);
     private GoogleApiClient mGoogleApiClient = null;
     private GoogleMap googleMap = null;
     private Marker currentMarker = null;
     Location mLastKnownLocation = null;
+
     double lat;
     double lng;
+
+    // 목록 정렬을 위해 만들었음.
+    private TreeMap<Integer, String> freindMap = new TreeMap<>();
 
 
     @Override
@@ -73,37 +78,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mGoogleApiClient.connect();
     }
 
-
-    private void setButtonClickListener() {
-        Button recommendBtn = (Button) findViewById(R.id.recommend);
-        Button statisticBtn = (Button) findViewById(R.id.statistic);
-
-        // TODO : askSituation에서 Intent까지 처리하게 하자!
-        recommendBtn.setOnClickListener(new View.OnClickListener() {
-
-            /**
-             * TODO input="같이 간 사람, 추천받을 시간"을 받아 Activity 이동.
-             */
-            @Override
-            public void onClick(View view) {
-                askSituation();
-                Intent intent = new Intent(mContext, RecommendActivity.class);
-                String personName = "";
-                String time = "";
-                intent.putExtra("personName", personName);
-                intent.putExtra("time", time);
-                startActivityForResult(intent, RECOMMEND_REQUEST);
-            }
-        });
-
-        statisticBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mContext, StatisticActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
 
     /**
      * TODO : 현재 위치로 이동시켜
@@ -152,7 +126,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_ZOOM));
         }
+    }
 
+
+    private void setButtonClickListener() {
+        Button recommendBtn = (Button) findViewById(R.id.recommend);
+        Button statisticBtn = (Button) findViewById(R.id.statistic);
+
+        recommendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                askSituation();
+            }
+        });
+
+        statisticBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, StatisticActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    /**
+     * TODO input="같이 간 사람, 추천받을 시간"을 받아 Activity 이동.
+     * 추천 버튼 눌렀을 때에 다이얼로그 띄워서 물어보는 부분.
+     * 시간은 TimePicker로 받을 건데, 알람 시간 정하는 Style로.
+     */
+    private void askSituation() {
+        Intent intent = new Intent(getApplicationContext(), RecommendDialog.class);
+        startActivity(intent);
     }
 
     /**
@@ -169,16 +173,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    /**
-     * TODO 추천 버튼 눌렀을 때에 다이얼로그 띄워서 물어보는 부분.
-     */
-    private void askSituation() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
-        dialog.setTitle("어디로 갈까?");
-        dialog.setView(R.layout.ask_dialog);
 
-
-    }
 
     private void permissionCheck() {
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
@@ -191,7 +186,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_COAST_LOCATION);
         }
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -223,16 +217,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setCurrentLocation(location, "위치정보 가져올 수 없음",
                 "위치 퍼미션과 GPS활성 여부 확인");
     }
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 //        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 //                .findFragmentById(R.id.map);
 //        mapFragment.getMapAsync(this);
     }
-
     @Override
     public void onConnectionSuspended(int i) {
-
     }
 }
