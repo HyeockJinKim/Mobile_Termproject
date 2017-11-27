@@ -34,7 +34,8 @@
             android:id="@+id/timeBtn"
             android:layout_width="124dp"
             android:layout_height="wrap_content"
-            android:text="00:00"/>
+            android:text="00:00"
+            android:onClick="timeBtnClick"/>
     </LinearLayout>
 
     <LinearLayout
