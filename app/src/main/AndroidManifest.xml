@@ -38,8 +38,11 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name="RecommendDialog"
-            android:theme="@android:style/Theme.Holo.Light.Dialog"></activity>
+            android:name=".RecommendDialog"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" />
+        <activity
+            android:name="LocationDialog"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" ></activity>
     </application>
 
 </manifest>
