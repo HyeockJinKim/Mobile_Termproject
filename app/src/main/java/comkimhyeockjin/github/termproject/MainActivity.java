@@ -106,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.googleMap = googleMap;
         if (mLastKnownLocation != null) {
             Log.d("MainActivity", "longitude =" + mLastKnownLocation.getLongitude() + ", latitude=" + mLastKnownLocation.getLatitude());
-
         }
         getDeviceLocation();
         setCurrentLocation(mLastKnownLocation, "나의 위치", "내 현재 위치");
