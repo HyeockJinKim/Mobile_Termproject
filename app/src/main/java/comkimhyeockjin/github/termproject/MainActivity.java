@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         recommendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                askSituation2();
+                askSituation();
             }
         });
 
@@ -152,44 +152,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * TODO input="같이 간 사람, 추천받을 시간"을 받아 Activity 이동.
      * 추천 버튼 눌렀을 때에 다이얼로그 띄워서 물어보는 부분.
-     * TODO dialog에 사림(같이 갈 사람)이름 목록이 뜨고, 만날 시간 입력
      * 시간은 TimePicker로 받을 건데, 알람 시간 정하는 Style로.
-     * 기본은 현재 시간이 보이게.
      */
     private void askSituation() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
-        dialog.setTitle("어디로 갈까?");
-        dialog.setView(R.layout.ask_dialog);
-
-        Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int min = calendar.get(Calendar.MINUTE);
-        Button timeBtn = (Button) findViewById(R.id.timeBtn);
-        Log.d("TimePicker", (timeBtn==null)?"null":timeBtn.getText().toString());
-        //버튼에 시간표시하려고 하는데 findViewById()로 못찾는거 같음.
-        //timeBtn.setText(hour+":"+min);
-
-        dialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                Intent intent = new Intent(mContext, RecommendActivity.class);
-                // personName, time은 dialog에서 입력받은 값으로...
-                String personName = "";
-                String time = "";
-                intent.putExtra("personName", personName);
-                intent.putExtra("time", time);
-                startActivityForResult(intent, RECOMMEND_REQUEST);
-            }
-        });
-        dialog.setNeutralButton("취소", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                Log.d("MainActivity", "취소버튼 누름");
-            }
-        });
-
-        dialog.show();
-
-    }
-    private void askSituation2() {
         Intent intent = new Intent(getApplicationContext(), RecommendDialog.class);
         startActivity(intent);
     }

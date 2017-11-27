@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -16,10 +18,14 @@ public class RecommendDialog extends Activity {
     int hour, min;
     Button timeBtn;
 
+    String[] spinnerItems = {"혼자", "사람1", "사람2", "사람3"};
+    String currentPersonName;
+    String currentTime;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ask_dialog2);
+        setContentView(R.layout.ask_dialog);
         this.setTitle("어디로 갈까?");
 
         Calendar calendar = Calendar.getInstance();
@@ -29,6 +35,11 @@ public class RecommendDialog extends Activity {
         Log.d("TimePicker", (timeBtn==null)?"null":timeBtn.getText().toString());
         timeBtn.setText(hour+":"+min);
 
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerItems);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        //TODO 스피너 클릭리스너 구현. https://developer.android.com/guide/topics/ui/controls/spinner.html?hl=ko#SelectListener 참고.
     }
 
 
@@ -42,8 +53,8 @@ public class RecommendDialog extends Activity {
 
         Intent intent = new Intent(getApplicationContext(), RecommendActivity.class);
         // personName, time은 dialog에서 입력받은 값으로...
-        String personName = "";
-        String time = "";
+        String personName = currentPersonName;
+        String time = currentTime;
         intent.putExtra("personName", personName);
         intent.putExtra("time", time);
         startActivityForResult(intent, RECOMMEND_REQUEST);
