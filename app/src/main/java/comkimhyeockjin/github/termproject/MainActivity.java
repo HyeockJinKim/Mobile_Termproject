@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         recommendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                askSituation();
+                askSituation2();
             }
         });
 
@@ -188,6 +188,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         dialog.show();
 
+    }
+    private void askSituation2() {
+        Intent intent = new Intent(getApplicationContext(), RecommendDialog.class);
+        startActivity(intent);
     }
 
     /**
