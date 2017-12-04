@@ -103,6 +103,7 @@ public class StatisticActivity extends AppCompatActivity {
      * @param context
      */
     private void viewChart(Context context, int chartId) {
+        chart.removeAllViews();
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(chartId, chart, true);
         makeChart(chartId);
@@ -137,7 +138,7 @@ public class StatisticActivity extends AppCompatActivity {
                 lineEntries.add(new Entry(2, 10));
                 lineEntries.add(new Entry(3, 30));
                 LineDataSet lineDataSet1 = new LineDataSet(lineEntries, "set1");
-                lineDataSet1.setColors(ColorTemplate.COLORFUL_COLORS);
+                lineDataSet1.setColor(ColorTemplate.COLORFUL_COLORS[2]);
 
                 ArrayList<ILineDataSet> lineDataSets = new ArrayList<ILineDataSet>();
                 lineDataSets.add(lineDataSet1);
@@ -160,7 +161,7 @@ public class StatisticActivity extends AppCompatActivity {
                 dataSets.add(dataSet1);
 
                 BarData barData = new BarData(dataSets);
-                barData.setBarWidth(0.9f);
+                barData.setBarWidth(0.9f);  //bar 사이의 간격
 
                 barChart.setData(barData);
                 barChart.invalidate();
