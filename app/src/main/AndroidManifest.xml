@@ -37,11 +37,16 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
-
+      
         <service
             android:name=".LocationService"
             android:enabled="true"
             android:exported="true"/>
+
+        <activity
+            android:name="RecommendDialog"
+            android:theme="@android:style/Theme.Holo.Light.Dialog"/>
+
     </application>
 
 </manifest>
