@@ -4,20 +4,24 @@ package comkimhyeockjin.github.termproject;
  * Created by user on 2017-11-27.
  */
 
-public class LocationInfo {
+public class PlaceInfo {
 
     public int id;
-    public String date;
     public double lng;
     public double lat;
     public double time;
+    public int star;
+    public String memo;
+    public String category;
 
-    public LocationInfo(int id, String date, double lng, double lat, double time) {
+    public PlaceInfo(int id, double lng, double lat, double time, int star, String memo, String category) {
         this.id = id;
-        this.date = date;
         this.lng = lng;
         this.lat = lat;
         this.time = time;
+        this.star = star;
+        this.memo = memo;
+        this.category = category;
     }
 
     public int getId() {
@@ -26,14 +30,6 @@ public class LocationInfo {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     public double getLng() {
@@ -58,6 +54,31 @@ public class LocationInfo {
 
     public void setTime(int time) {
         this.time = time;
+    }
+
+    public int getStar() {
+        return star;
+    }
+
+    public void setStar(int star) {
+        this.star = star;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
+
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.memo = category;
     }
 
 }
