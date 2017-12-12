@@ -59,7 +59,6 @@ public class StatisticActivity extends AppCompatActivity {
         Button bar = (Button) findViewById(R.id.barBtn);
         Button pie = (Button) findViewById(R.id.pieBtn);
 
-        //TODO FrameLayout으로 바꿔야 함.
         line.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,18 +109,29 @@ public class StatisticActivity extends AppCompatActivity {
     }
 
     private void makeChart(int chartId) {
+        //더미 데이터
+        String[] locationName = {"a", "b", "c", "d"};
+
+        List<Integer> colors = new ArrayList<Integer>();
+        for (int c : ColorTemplate.PASTEL_COLORS)
+            colors.add(c);
+
         switch (chartId) {
             case PIE_CHART:
+                /*
+                장소명을 먼저 배열에 저장.
+                그 후에 장소명으로 그룹지어서 시간의 합 구하여 배열에 저장.
+                참고. 뒤에 '%'붙일거면 전체 합 구해서 나눠야 함.
+                 */
+                //더미 데이터
+                int[] time = {10, 20, 30, 40};
+
                 PieChart pieChart = (PieChart) findViewById(R.id.pieChart);
                 ArrayList<PieEntry> entries = new ArrayList<>();
-                entries.add(new PieEntry(10, "a"));
-                entries.add(new PieEntry(20, "b"));
-                entries.add(new PieEntry(30, "c"));
-                entries.add(new PieEntry(40, "d"));
+                for (int i=0; i<locationName.length; i++) {
+                    entries.add(new PieEntry(time[i], locationName[i]));
+                }
                 PieDataSet dataSet = new PieDataSet(entries, "ban");
-                List<Integer> colors = new ArrayList<Integer>();
-                for (int c : ColorTemplate.PASTEL_COLORS)
-                    colors.add(c);
                 dataSet.setColors(colors);
                 dataSet.setSliceSpace(3f);
 
@@ -132,16 +142,30 @@ public class StatisticActivity extends AppCompatActivity {
                 pieChart.invalidate();
                 break;
             case LINE_CHART:
+                /*
+                장소명을 먼저 배열에 저장.
+                장소명으로 저장된 머무른? 내역 확인해서 특정 시간(혹은 시간대)에 그 장소에 있었으면 freq[시간]에 1 추가.
+                장소 하나가 data set 1개.
+                 */
+                //더미 데이터. freq[13]은 13시에 해당 장소에 있었던 횟수.
+                int[][] freq = { {0, 20, 10, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                                {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10},
+                                {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20},
+                                {30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30} };
+
                 LineChart lineChart = (LineChart) findViewById(R.id.lineChart);
-                ArrayList<Entry> lineEntries = new ArrayList<Entry>();
-                lineEntries.add(new Entry(1, 20));
-                lineEntries.add(new Entry(2, 10));
-                lineEntries.add(new Entry(3, 30));
-                LineDataSet lineDataSet1 = new LineDataSet(lineEntries, "set1");
-                lineDataSet1.setColor(ColorTemplate.COLORFUL_COLORS[2]);
 
                 ArrayList<ILineDataSet> lineDataSets = new ArrayList<ILineDataSet>();
-                lineDataSets.add(lineDataSet1);
+                for (int i=0; i<locationName.length; i++) {
+                    ArrayList<Entry> lineEntries = new ArrayList<Entry>();
+                    for (int j=0; j<freq.length; j++) {
+                        lineEntries.add(new Entry(j, freq[i][j]));
+                    }
+                    LineDataSet lineDataSet = new LineDataSet(lineEntries, locationName[i]);
+                    lineDataSet.setColor(colors.get(i));
+
+                    lineDataSets.add(lineDataSet);
+                }
 
                 LineData lineData = new LineData(lineDataSets);
 
@@ -149,16 +173,30 @@ public class StatisticActivity extends AppCompatActivity {
                 lineChart.invalidate();
                 break;
             case BAR_CHART:
+                /*
+                장소명을 먼저 배열에 저장.
+                장소명으로 저장된 머무른? 내역 확인해서 특정 시간(혹은 시간대)에 그 장소에 있었으면 freq[시간]에 1 추가.
+                엔트리 1개가 장소 1개.
+                 */
+                //더미 데이터
+                int[][] freqs = { {0, 20, 10, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10},
+                        {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20},
+                        {30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30} };
+
                 BarChart barChart = (BarChart) findViewById(R.id.barChart);
-                ArrayList<BarEntry> barEntries = new ArrayList<BarEntry>();
-                barEntries.add(new BarEntry(1, 10));
-                barEntries.add(new BarEntry(2, 20));
-                barEntries.add(new BarEntry(3, 40));
-                BarDataSet dataSet1 = new BarDataSet(barEntries, "bar");
-                dataSet1.setColors(ColorTemplate.MATERIAL_COLORS);
 
                 ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
-                dataSets.add(dataSet1);
+                for (int t = 0; t < freqs.length; t++) {
+                    ArrayList<BarEntry> barEntry = new ArrayList<BarEntry>();
+                    int max = maxLocIndex(freqs, t);
+                    barEntry.add(new BarEntry(t+0.5f, freqs[max][t]));
+
+                    BarDataSet barDataSet = new BarDataSet(barEntry, locationName[max]);
+                    barDataSet.setColors(colors.get(max));
+
+                    dataSets.add(barDataSet);
+                }
 
                 BarData barData = new BarData(dataSets);
                 barData.setBarWidth(0.9f);  //bar 사이의 간격
@@ -167,6 +205,15 @@ public class StatisticActivity extends AppCompatActivity {
                 barChart.invalidate();
                 break;
         }
+    }
+
+    private int maxLocIndex(int[][] freq, int time) {
+        int maxIndex = 0;
+        for (int i=1; i<freq.length; i++) {
+            if (freq[maxIndex][time] < freq[i][time]) maxIndex = i;
+        }
+
+        return maxIndex;
     }
 
     /**
