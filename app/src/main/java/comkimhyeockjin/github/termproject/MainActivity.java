@@ -42,10 +42,10 @@ import java.util.TreeMap;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     Context mContext = this;
     public static final int RECOMMEND_REQUEST = 1;
-    private static final int PERMISSION_FINE_LOCATION = 101;
-    private static final int PERMISSION_COAST_LOCATION = 102;
 
-    private static final LatLng DEFAULT_ZOOM = new LatLng(37, 127);
+    private static final int PERMISSION_LOCATION = 101;
+    private static final LatLng DEFAULT_ZOOM = new LatLng(35.9, 127.5);
+  
     private GoogleApiClient mGoogleApiClient = null;
     private GoogleMap googleMap = null;
     private Marker currentMarker = null;
@@ -57,16 +57,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     // 목록 정렬을 위해 만들었음.
     private TreeMap<Integer, String> freindMap = new TreeMap<>();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
-        mapFragment.getMapAsync(this);
         permissionCheck();
         setButtonClickListener();
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */,
                         this /* OnConnectionFailedListener */)
@@ -80,50 +76,43 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     /**
-     * TODO : 현재 위치로 이동시켜
+     * map 실행하는 화면
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         if (mLastKnownLocation != null) {
-            Log.d("MainActivity", "longitude =" + lng + ", latitude=" + lat);
-//            LatLng myLocation = new LatLng(lat, lng);
-//            this.googleMap.addMarker(new MarkerOptions().position(myLocation).title("Marker in my location"));
-//            this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
-            setCurrentLocation(null, "나의 위치", "내 현재 위치");
+            Log.d("MainActivity", "longitude =" + mLastKnownLocation.getLongitude() + ", latitude=" + mLastKnownLocation.getLatitude());
         }
+        getDeviceLocation();
+        setCurrentLocation(mLastKnownLocation, "나의 위치", "내 현재 위치");
     }
 
 
     /**
-     *
+     *  입력받은 Location 에 마커를 찍고 카메라를 이동시켜줌.
      */
     public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
-        if ( currentMarker != null ) currentMarker.remove();
+        if (currentMarker != null) currentMarker.remove();
 
-        if ( location != null) {
-            //현재위치의 위도 경도 가져옴
+        if (location != null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(currentLocation);
             markerOptions.title(markerTitle);
             markerOptions.snippet(markerSnippet);
-            markerOptions.draggable(true);
+            markerOptions.draggable(false);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
             currentMarker = this.googleMap.addMarker(markerOptions);
-
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
-            return;
         } else {
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(DEFAULT_ZOOM);
             markerOptions.title(markerTitle);
             markerOptions.snippet(markerSnippet);
-            markerOptions.draggable(true);
+            markerOptions.draggable(false);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             currentMarker = this.googleMap.addMarker(markerOptions);
-
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_ZOOM));
         }
     }
@@ -160,6 +149,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /**
+     *  현재 위치 값을 받아오는 함수.
+     */
+    private void getDeviceLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mLastKnownLocation = LocationServices.FusedLocationApi
+                .getLastLocation(mGoogleApiClient);
+
+        if (mLastKnownLocation != null) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(mLastKnownLocation.getLatitude(),
+                            mLastKnownLocation.getLongitude()), 15)); // 15는 초기 zoom 값 (확대 값)
+        } else {
+            Log.d("MainActivity", "Current location is null. Using defaults.");
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_ZOOM, 15));
+            googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+        }
+    }
+
+    /**
      * TODO 선택한 Item 위치에 표시
      */
     @Override
@@ -178,33 +189,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void permissionCheck() {
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_FINE_LOCATION);
-        }
-
-        permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_COAST_LOCATION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_LOCATION);
         }
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
         switch (requestCode) {
-            case PERMISSION_FINE_LOCATION:
+            case PERMISSION_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(mContext, "Location 권한 승인", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(mContext, "권한 거부.", Toast.LENGTH_SHORT).show();
-                    finish();
+                    Toast.makeText(mContext, "Location 권한 없음", Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case PERMISSION_COAST_LOCATION:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(mContext, "Location 권한 승인", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(mContext, "권한 거부.", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                break;
+            default:
+                return;
+        }
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            finish();
         }
     }
 
@@ -219,9 +223,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+        mapFragment.getMapAsync(this);
     }
     @Override
     public void onConnectionSuspended(int i) {
