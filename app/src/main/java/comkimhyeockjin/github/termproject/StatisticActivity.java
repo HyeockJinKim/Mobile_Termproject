@@ -28,6 +28,8 @@ public class StatisticActivity extends AppCompatActivity {
     Context mContext = this;
     String filePath;
     TreeMap<Integer, String> treeMap = null;
+    private PlaceDB placeDB;
+    private LocationDB locationDB;
     static final int LINE_CHART = R.layout.line_chart;
     static final int BAR_CHART = R.layout.bar_chart;
     static final int PIE_CHART = R.layout.pie_chart;
@@ -104,6 +106,9 @@ public class StatisticActivity extends AppCompatActivity {
             case PIE_CHART:
                 PieChart pieChart = (PieChart) findViewById(R.id.pieChart);
                 ArrayList<PieEntry> entries = new ArrayList<>();
+                for (PlaceInfo placeInfo :placeDB.getAllInfo()) {
+                    entries.add(new PieEntry((int)placeInfo.getTime(), placeInfo.getName()));
+                }
 
                 entries.add(new PieEntry(10, "hz"));
                 entries.add(new PieEntry(15, "khz"));

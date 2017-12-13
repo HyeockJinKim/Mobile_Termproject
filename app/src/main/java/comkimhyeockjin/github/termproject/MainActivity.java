@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private static final int PERMISSION_LOCATION = 101;
     private static final LatLng DEFAULT_ZOOM = new LatLng(35.9, 127.5);
-  
+    private PlaceDB placeDB;
     private GoogleApiClient mGoogleApiClient = null;
     private GoogleMap googleMap = null;
     private Marker currentMarker = null;
@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        placeDB = new PlaceDB(this);
         permissionCheck();
         setButtonClickListener();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -84,7 +85,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         getDeviceLocation();
         setCurrentLocation(mLastKnownLocation);
-        // PlaceDB 에서 읽어와서 추가도 해줘야 할듯
+        // PlaceDB 에서 읽어와서 추가도 해줘야 할듯, 추가 완료.
+        for (PlaceInfo placeInfo :placeDB.getAllInfo()) {
+            LatLng latLng = new LatLng(placeInfo.getLat(), placeInfo.getLng());
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(latLng)
+                    .title(placeInfo.getName())
+                    .snippet(placeInfo.getMemo())
+                    .draggable(false)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            this.googleMap.addMarker(markerOptions);
+        }
     }
 
 
@@ -110,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .title(myTitle)
                     .snippet(myContent)
                     .draggable(false)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
             currentMarker = this.googleMap.addMarker(markerOptions);
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_ZOOM));
         }
@@ -140,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * TODO input="같이 간 사람, 추천받을 시간"을 받아 Activity 이동.
      * 추천 버튼 눌렀을 때에 다이얼로그 띄워서 물어보는 부분.
-     * 시간은 TimePicker 로 받을 건데, 알람 시간 정하는 Style로.
+     * 시간은 TimePicker 로 받을 건데, 알람 시간 정하는 Style 로.
      */
     private void askSituation() {
         Intent intent = new Intent(getApplicationContext(), RecommendDialog.class);
@@ -220,6 +231,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    /**
+     * 이동을 확인하는 listener
+     */
     LocationSource.OnLocationChangedListener listener = new LocationSource.OnLocationChangedListener() {
         @Override
         public void onLocationChanged(Location location) {

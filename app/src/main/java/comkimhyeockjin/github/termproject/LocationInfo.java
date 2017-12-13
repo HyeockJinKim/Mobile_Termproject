@@ -4,6 +4,9 @@ package comkimhyeockjin.github.termproject;
  * Created by user on 2017-11-27.
  */
 
+/**
+ * 시간 순으로 적히는 것.
+ */
 public class LocationInfo {
 
     public int id;

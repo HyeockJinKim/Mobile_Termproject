@@ -12,6 +12,10 @@ import java.util.ArrayList;
  * Created by user on 2017-12-11.
  */
 
+
+/**
+ * 장소마다의 데이터가 저장.
+ */
 public class PlaceDB extends SQLiteOpenHelper {
     private static final int VERSION = 1;
     private static final String DB_NAME = "PlaceDB.db";

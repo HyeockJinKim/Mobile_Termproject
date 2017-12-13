@@ -79,6 +79,7 @@ public class LocationService extends Service {
                             timer /= 4;
                         }
                         // DB 저장 필요.
+                        // 창을 띄워서 별점같은 것을 받아야함.
 
 
 
