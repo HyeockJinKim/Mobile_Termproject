@@ -11,15 +11,17 @@ public class PlaceInfo {
     public double lat;
     public double time;
     public int star;
+    public String name;
     public String memo;
     public String category;
 
-    public PlaceInfo(int id, double lng, double lat, double time, int star, String memo, String category) {
+    public PlaceInfo(int id, double lng, double lat, double time, int star, String name, String memo, String category) {
         this.id = id;
         this.lng = lng;
         this.lat = lat;
         this.time = time;
         this.star = star;
+        this.name = name;
         this.memo = memo;
         this.category = category;
     }
@@ -52,8 +54,16 @@ public class PlaceInfo {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(double time) {
         this.time = time;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getStar() {

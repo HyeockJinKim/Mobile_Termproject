@@ -24,6 +24,7 @@ public class PlaceDB extends SQLiteOpenHelper {
     private static final String LAT = "lat";
     private static final String TIME = "time";
     private static final String STAR = "star";
+    private static final String NAME = "name";
     private static final String MEMO = "memo";
     private static final String CATE = "category";
 
@@ -34,6 +35,7 @@ public class PlaceDB extends SQLiteOpenHelper {
                     LAT + " text not null, " +
                     TIME + " text not null, " +
                     STAR + " text not null, " +
+                    NAME + " text not null, " +
                     MEMO + " text not null, " +
                     CATE + " text not null )";
 
@@ -66,13 +68,14 @@ public class PlaceDB extends SQLiteOpenHelper {
     }
 
     // Create
-    public boolean insertInfo(double lng, double lat, double time, int star, String memo, String category) {
+    public boolean insertInfo(double lng, double lat, double time, int star, String name, String memo, String category) {
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(LNG, lng);
         contentValues.put(LAT, lat);
         contentValues.put(TIME, time);
         contentValues.put(STAR, star);
+        contentValues.put(NAME, name);
         contentValues.put(MEMO, memo);
         contentValues.put(CATE, category);
 
@@ -82,7 +85,7 @@ public class PlaceDB extends SQLiteOpenHelper {
     // Read
     public ArrayList<PlaceInfo> getAllInfo() {
         ArrayList<PlaceInfo> info = new ArrayList<>();
-        Cursor cursor = db.query(TABLE_NAME, new String[]{ID, LNG, LAT, TIME, STAR, MEMO, CATE}, null, null, null, null, ID + " DESC");
+        Cursor cursor = db.query(TABLE_NAME, new String[]{ID, LNG, LAT, TIME, STAR, NAME, MEMO, CATE}, null, null, null, null, ID + " DESC");
 
         if (cursor.moveToFirst()) {
             final int indexId = cursor.getColumnIndex(ID);
@@ -90,6 +93,7 @@ public class PlaceDB extends SQLiteOpenHelper {
             final int indexLat = cursor.getColumnIndex(LAT);
             final int indexTime = cursor.getColumnIndex(TIME);
             final int indexStar = cursor.getColumnIndex(STAR);
+            final int indexName = cursor.getColumnIndex(NAME);
             final int indexMemo = cursor.getColumnIndex(MEMO);
             final int indexCATE = cursor.getColumnIndex(CATE);
 
@@ -99,10 +103,11 @@ public class PlaceDB extends SQLiteOpenHelper {
                 double lat = cursor.getDouble(indexLat);
                 double time = cursor.getInt(indexTime);
                 int star = cursor.getInt(indexStar);
+                String name = cursor.getString(indexName);
                 String memo = cursor.getString(indexMemo);
                 String cate = cursor.getString(indexCATE);
 
-                info.add(new PlaceInfo(id, lng, lat, time, star, memo, cate));
+                info.add(new PlaceInfo(id, lng, lat, time, star, name, memo, cate));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -117,6 +122,7 @@ public class PlaceDB extends SQLiteOpenHelper {
         contentValues.put(LAT, placeInfo.getLat());
         contentValues.put(TIME, placeInfo.getTime());
         contentValues.put(STAR, placeInfo.getStar());
+        contentValues.put(NAME, placeInfo.getName());
         contentValues.put(MEMO, placeInfo.getMemo());
         contentValues.put(CATE, placeInfo.getCategory());
 
