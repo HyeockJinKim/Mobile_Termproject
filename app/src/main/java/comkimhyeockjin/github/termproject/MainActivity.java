@@ -22,6 +22,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -39,6 +40,8 @@ import java.util.TreeMap;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     Context mContext = this;
     public static final int RECOMMEND_REQUEST = 1;
+    private static final String myTitle = "나의 위치";
+    private static final String myContent = "내 현재 위치";
 
     private static final int PERMISSION_LOCATION = 101;
     private static final LatLng DEFAULT_ZOOM = new LatLng(35.9, 127.5);
@@ -80,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.d("MainActivity", "longitude =" + mLastKnownLocation.getLongitude() + ", latitude=" + mLastKnownLocation.getLatitude());
         }
         getDeviceLocation();
-        setCurrentLocation(mLastKnownLocation, "나의 위치", "내 현재 위치");
+        setCurrentLocation(mLastKnownLocation);
         // PlaceDB 에서 읽어와서 추가도 해줘야 할듯
     }
 
@@ -88,26 +91,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      *  입력받은 Location 에 마커를 찍고 카메라를 이동시켜줌.
      */
-    public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
+    public void setCurrentLocation(Location location) {
         if (currentMarker != null) currentMarker.remove();
 
         if (location != null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(currentLocation);
-            markerOptions.title(markerTitle);
-            markerOptions.snippet(markerSnippet);
-            markerOptions.draggable(false);
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(currentLocation)
+                    .title(myTitle)
+                    .snippet(myContent)
+                    .draggable(false)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
             currentMarker = this.googleMap.addMarker(markerOptions);
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
         } else {
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(DEFAULT_ZOOM);
-            markerOptions.title(markerTitle);
-            markerOptions.snippet(markerSnippet);
-            markerOptions.draggable(false);
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(DEFAULT_ZOOM)
+                    .title(myTitle)
+                    .snippet(myContent)
+                    .draggable(false)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             currentMarker = this.googleMap.addMarker(markerOptions);
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_ZOOM));
         }
@@ -167,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /**
-     * TODO 선택한 Item 위치에 표시
+     * TODO 선택한 Item 위치에 표시 해결!
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -217,14 +220,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    LocationSource.OnLocationChangedListener listener = new LocationSource.OnLocationChangedListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            setCurrentLocation(location);
+        }
+    };
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Location location = new Location("");
         location.setLatitude(DEFAULT_ZOOM.latitude);
         location.setLongitude((DEFAULT_ZOOM.longitude));
 
-        setCurrentLocation(location, "위치정보 가져올 수 없음",
-                "위치 퍼미션과 GPS활성 여부 확인");
+        setCurrentLocation(location);
     }
 
     @Override
