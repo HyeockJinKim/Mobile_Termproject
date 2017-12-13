@@ -2,7 +2,6 @@ package comkimhyeockjin.github.termproject;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -31,13 +29,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.Calendar;
 import java.util.TreeMap;
 
 /**
- * TODO Google Map API를 적용시켜야 함.
- * Google 지도 API가 들어갈 Activity.
- * 이 Activity에서 추천, 통계 를 볼 수 있다.
+ * TODO Google Map API 를 적용시켜야 함.
+ * Google 지도 API 가 들어갈 Activity.
+ * 이 Activity 에서 추천, 통계 를 볼 수 있다.
  */
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     Context mContext = this;
@@ -49,13 +46,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleApiClient mGoogleApiClient = null;
     private GoogleMap googleMap = null;
     private Marker currentMarker = null;
+    private Marker recommendMarker = null;
     Location mLastKnownLocation = null;
 
-    double lat;
-    double lng;
-
     // 목록 정렬을 위해 만들었음.
-    private TreeMap<Integer, String> freindMap = new TreeMap<>();
+    private TreeMap<Integer, String> friendMap = new TreeMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         getDeviceLocation();
         setCurrentLocation(mLastKnownLocation, "나의 위치", "내 현재 위치");
+        // PlaceDB 에서 읽어와서 추가도 해줘야 할듯
     }
 
 
@@ -141,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * TODO input="같이 간 사람, 추천받을 시간"을 받아 Activity 이동.
      * 추천 버튼 눌렀을 때에 다이얼로그 띄워서 물어보는 부분.
-     * 시간은 TimePicker로 받을 건데, 알람 시간 정하는 Style로.
+     * 시간은 TimePicker 로 받을 건데, 알람 시간 정하는 Style로.
      */
     private void askSituation() {
         Intent intent = new Intent(getApplicationContext(), RecommendDialog.class);
@@ -175,16 +171,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case RECOMMEND_REQUEST:
-                if (resultCode == RESULT_OK) {
+        if (requestCode == RECOMMEND_REQUEST && resultCode == RESULT_OK) {
+            try {
+                String placeName = data.getExtras().getString("placeName");
+                LatLng latLng = new LatLng(data.getExtras().getDouble("lat"),
+                        data.getExtras().getDouble("lng"));
 
-                }
-                break;
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(latLng)
+                        .title(placeName)
+                        .draggable(false)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                recommendMarker = this.googleMap.addMarker(markerOptions);
+                this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
         }
     }
-
-
 
     private void permissionCheck() {
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
@@ -221,11 +226,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setCurrentLocation(location, "위치정보 가져올 수 없음",
                 "위치 퍼미션과 GPS활성 여부 확인");
     }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
         mapFragment.getMapAsync(this);
     }
+
     @Override
     public void onConnectionSuspended(int i) {
     }
