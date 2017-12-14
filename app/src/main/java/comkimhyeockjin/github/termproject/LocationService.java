@@ -143,7 +143,7 @@ public class LocationService extends Service {
                     }
                     placeTime = 0;
                     if (timer > 120000) {
-                        timer /= 4;
+                        timer /= 2;
                     }
                     lat = curLat;
                     lng = curLng;

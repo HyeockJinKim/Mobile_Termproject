@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .title(placeInfo.getName())
                         .snippet(placeInfo.getMemo())
                         .draggable(false)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.mark));
                 this.googleMap.addMarker(markerOptions);
             }
         }
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .title(myTitle)
                     .snippet(myContent)
                     .draggable(false)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.mine));
             currentMarker = this.googleMap.addMarker(markerOptions);
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
         } else {
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .title(myTitle)
                     .snippet(myContent)
                     .draggable(false)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.mine));
             currentMarker = this.googleMap.addMarker(markerOptions);
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_ZOOM));
         }
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .position(latLng)
                         .title(placeName)
                         .draggable(false)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.question));
                 recommendMarker = null;
                 recommendMarker = googleMap.addMarker(markerOptions);
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
