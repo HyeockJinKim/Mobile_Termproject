@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .addApi(Places.PLACE_DETECTION_API)
                 .build();
         mGoogleApiClient.connect();
-
         Intent intent = new Intent(mContext, LocationService.class);
         startService(intent);
     }
@@ -263,4 +262,5 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onConnectionSuspended(int i) {
     }
+
 }
