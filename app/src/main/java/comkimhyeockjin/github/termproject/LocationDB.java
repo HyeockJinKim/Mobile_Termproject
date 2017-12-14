@@ -43,7 +43,9 @@ public class LocationDB extends SQLiteOpenHelper {
     private static final String DATE = "date";
     private static final String LNG = "lng";
     private static final String LAT = "lat";
+    private static final String FRIEND = "friend";
     private static final String TIME = "time";
+
 
     private static final String CREATE_TABLE =
             "CREATE TABLE " + TABLE_NAME + " (" +
@@ -51,6 +53,7 @@ public class LocationDB extends SQLiteOpenHelper {
                     DATE + " text not null, " +
                     LNG + " text not null, " +
                     LAT + " text not null, " +
+                    FRIEND + " text not null, "+
                     TIME + " text not null )";
 
     public LocationDB(Context context) {
@@ -82,12 +85,13 @@ public class LocationDB extends SQLiteOpenHelper {
     }
 
     // Create
-    public boolean insertInfo(String date, double lng, double lat, int time) {
+    public boolean insertInfo(String date, double lng, double lat, String friend, int time) {
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(DATE, date);
         contentValues.put(LNG, lng);
         contentValues.put(LAT, lat);
+        contentValues.put(FRIEND, friend);
         contentValues.put(TIME, time);
 
         return db.insert(TABLE_NAME, null, contentValues) != -1;
@@ -96,13 +100,14 @@ public class LocationDB extends SQLiteOpenHelper {
     // Read
     public ArrayList<LocationInfo> getAllInfo() {
         ArrayList<LocationInfo> info = new ArrayList<>();
-        Cursor cursor = db.query(TABLE_NAME, new String[]{ID, DATE, LNG, LAT, TIME}, null, null, null, null, ID + " DESC");
+        Cursor cursor = db.query(TABLE_NAME, new String[]{ID, DATE, LNG, LAT, FRIEND, TIME}, null, null, null, null, ID + " DESC");
 
         if (cursor.moveToFirst()) {
             final int indexId = cursor.getColumnIndex(ID);
             final int indexDate = cursor.getColumnIndex(DATE);
             final int indexLng = cursor.getColumnIndex(LNG);
             final int indexLat = cursor.getColumnIndex(LAT);
+            final int indexFriend = cursor.getColumnIndex(FRIEND);
             final int indexTime = cursor.getColumnIndex(TIME);
 
             do {
@@ -110,9 +115,10 @@ public class LocationDB extends SQLiteOpenHelper {
                 String date = cursor.getString(indexDate);
                 double lng = cursor.getDouble(indexLng);
                 double lat = cursor.getDouble(indexLat);
+                String friend = cursor.getString(indexFriend);
                 int time = cursor.getInt(indexTime);
 
-                info.add(new LocationInfo(id, date, lng, lat, time));
+                info.add(new LocationInfo(id, date, lng, lat, friend, time));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -126,6 +132,7 @@ public class LocationDB extends SQLiteOpenHelper {
         contentValues.put(DATE, locationInfo.getDate());
         contentValues.put(LNG, locationInfo.getLng());
         contentValues.put(LAT, locationInfo.getLat());
+        contentValues.put(FRIEND, locationInfo.getFriend());
         contentValues.put(TIME, locationInfo.getTime());
 
         String[] params = new String[]{Integer.toString(locationInfo.getId())};

@@ -13,6 +13,7 @@ public class ServiceAsk extends Activity {
     LocationDB locationDB;
     EditText placeName;
     EditText cate;
+    EditText friend;
     RatingBar star;
     EditText memo;
     double lat;
@@ -31,6 +32,7 @@ public class ServiceAsk extends Activity {
 
         placeName = (EditText) findViewById(R.id.placeName);
         cate = (EditText) findViewById(R.id.cate);
+        friend = (EditText) findViewById(R.id.friend);
         star = (RatingBar) findViewById(R.id.star);
         memo = (EditText) findViewById(R.id.memo);
         star.setNumStars(5);
@@ -53,7 +55,7 @@ public class ServiceAsk extends Activity {
     }
 
     public void clickOk(View view){
-        locationDB.insertInfo(date, lng, lat, time);
+        locationDB.insertInfo(date, lng, lat, friend.getText().toString(), time);
         placeDB.insertInfo(lng, lat, time, (int) (star.getRating() * 2),
                 placeName.getText().toString(), memo.getText().toString(), cate.getText().toString());
 

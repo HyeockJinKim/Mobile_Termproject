@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 /**
@@ -39,6 +40,7 @@ import java.util.TreeMap;
  */
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     Context mContext = this;
+    public static final int DIALOG_REQUEST = 2;
     public static final int RECOMMEND_REQUEST = 1;
     private static final String myTitle = "나의 위치";
     private static final String myContent = "내 현재 위치";
@@ -72,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .addApi(Places.PLACE_DETECTION_API)
                 .build();
         mGoogleApiClient.connect();
-
         Intent intent = new Intent(mContext, LocationService.class);
         startService(intent);
     }
@@ -90,15 +91,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         getDeviceLocation();
         setCurrentLocation(mLastKnownLocation);
         // PlaceDB 에서 읽어와서 추가도 해줘야 할듯, 추가 완료.
-        for (PlaceInfo placeInfo :placeDB.getAllInfo()) {
-            LatLng latLng = new LatLng(placeInfo.getLat(), placeInfo.getLng());
-            MarkerOptions markerOptions = new MarkerOptions()
-                    .position(latLng)
-                    .title(placeInfo.getName())
-                    .snippet(placeInfo.getMemo())
-                    .draggable(false)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-            this.googleMap.addMarker(markerOptions);
+        ArrayList<PlaceInfo> placeInfoArrayList = placeDB.getAllInfo();
+        if (placeInfoArrayList != null) {
+            for (PlaceInfo placeInfo : placeInfoArrayList) {
+                LatLng latLng = new LatLng(placeInfo.getLat(), placeInfo.getLng());
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(latLng)
+                        .title(placeInfo.getName())
+                        .snippet(placeInfo.getMemo())
+                        .draggable(false)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                this.googleMap.addMarker(markerOptions);
+            }
         }
     }
 
@@ -206,6 +210,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
+        } else if (requestCode == DIALOG_REQUEST && resultCode == RESULT_OK) {
+            Intent intent = data;
+            intent.setClass(mContext, RecommendActivity.class);
+            startActivityForResult(intent, RECOMMEND_REQUEST);
         }
     }
 
@@ -263,4 +271,5 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onConnectionSuspended(int i) {
     }
+
 }

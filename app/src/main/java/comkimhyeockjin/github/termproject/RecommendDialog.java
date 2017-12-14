@@ -12,10 +12,14 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.util.Calendar;
 
 public class RecommendDialog extends Activity {
-    public static final int RECOMMEND_REQUEST = 1;
     int hour, min;
     Button timeBtn;
 
@@ -40,7 +44,6 @@ public class RecommendDialog extends Activity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerItems);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        //TODO 스피너 클릭리스너 구현. https://developer.android.com/guide/topics/ui/controls/spinner.html?hl=ko#SelectListener 참고.
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
@@ -60,17 +63,17 @@ public class RecommendDialog extends Activity {
         finish();
     }
 
-
     public void startRecommendActivity(View v) {
-        finish();
 
-        Intent intent = new Intent(getApplicationContext(), RecommendActivity.class);
+        Intent intent = new Intent();
         // personName, time은 dialog에서 입력받은 값으로...
         String personName = currentPersonName;
         String time = currentTime;
         intent.putExtra("personName", personName);
         intent.putExtra("time", time);
-        startActivityForResult(intent, RECOMMEND_REQUEST);
+        setResult(RESULT_OK, intent);
+
+        finish();
     }
 
     public void timeBtnClick(View v) {

@@ -3,8 +3,8 @@ package comkimhyeockjin.github.termproject;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 public class RecommendActivity extends AppCompatActivity {
     RecommendAdapter recommendAdapter;
-    public static final int RECOMMEND_REQUEST = 1;
     Context mContext = this;
 
     /**
@@ -34,11 +33,13 @@ public class RecommendActivity extends AppCompatActivity {
 
         ListView recommendList = (ListView) findViewById(R.id.recommendList);
         recommendAdapter = new RecommendAdapter();
+      
         //TODO 어댑터에 아이템 추가해야 함.
         //일단 임의로
-        recommendAdapter.addItem(new RecommendItem("name1", 10, "category1"));
-        recommendAdapter.addItem(new RecommendItem("name2", 20, "category2"));
-
+        recommendAdapter.addItem(new RecommendItem("name1", 10, "category1", 34.9, 127.5));
+        recommendAdapter.addItem(new RecommendItem("name2", 20, "category2", 36.9, 127.5));
+        recommendAdapter.addItem(new RecommendItem("name3", 30, "category3", 50.9, 127.5));
+        
         recommendList.setAdapter(recommendAdapter);
 
         recommendList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -50,8 +51,14 @@ public class RecommendActivity extends AppCompatActivity {
                 String name = item.getLocationName();
                 double distance = item.getDistance();
                 Log.d("RecommendActivity", name+", "+distance);
-                //TODO 클릭하면 지도에 띄워야 하는거 아님?
+              
                 Intent resultIntent = new Intent();
+                resultIntent.putExtra("placeName", name);
+                resultIntent.putExtra("lat", item.getLat());
+                resultIntent.putExtra("lng", item.getLng());
+                Log.d("test", "RecoActivity에서 인텐트 보냄.");
+                Log.d("test", item.getLat()+", "+item.getLng());
+
                 setResult(RESULT_OK, resultIntent);
                 finish();
             }
