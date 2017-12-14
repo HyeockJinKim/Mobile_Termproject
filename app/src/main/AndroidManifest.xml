@@ -48,6 +48,7 @@
             android:theme="@android:style/Theme.Holo.Light.Dialog" />
         <activity android:name=".ServiceAsk"
             android:theme="@android:style/Theme.Holo.Light.Dialog" />
+
     </application>
 
 </manifest>
