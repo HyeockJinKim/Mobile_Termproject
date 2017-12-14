@@ -137,8 +137,6 @@ public class PlaceDB extends SQLiteOpenHelper {
 
     public boolean checkInfo(double lat, double lng) {
         Cursor cursor = db.rawQuery("select * from table where lat = "+lat+ "and lng = "+lng+";", null);
-
-
         return cursor.moveToFirst();
     }
 
