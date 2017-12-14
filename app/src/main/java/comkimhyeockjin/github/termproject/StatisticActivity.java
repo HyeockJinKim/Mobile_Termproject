@@ -56,7 +56,6 @@ public class StatisticActivity extends AppCompatActivity {
         chart = (LinearLayout) findViewById(R.id.chart);
         init(mContext);
 
-
         Button line = (Button) findViewById(R.id.lineBtn);
         Button bar = (Button) findViewById(R.id.barBtn);
         Button pie = (Button) findViewById(R.id.pieBtn);
@@ -88,6 +87,8 @@ public class StatisticActivity extends AppCompatActivity {
      */
     private void init(Context context) {
 //        filePath =
+        placeDB = new PlaceDB(this);
+        locationDB = new LocationDB(this);
         if (treeMap == null) {
             try {
                 readLocationData();
@@ -130,11 +131,12 @@ public class StatisticActivity extends AppCompatActivity {
 
                 PieChart pieChart = (PieChart) findViewById(R.id.pieChart);
                 ArrayList<PieEntry> entries = new ArrayList<>();
-
-                for (PlaceInfo placeInfo :placeDB.getAllInfo()) {
-                    entries.add(new PieEntry((int)placeInfo.getTime(), placeInfo.getName()));
+                ArrayList<PlaceInfo> placeInfoArrayList = placeDB.getAllInfo();
+                if (placeInfoArrayList != null) {
+                    for (PlaceInfo placeInfo : placeInfoArrayList) {
+                        entries.add(new PieEntry((int) placeInfo.getTime(), placeInfo.getName()));
+                    }
                 }
-
                 entries.add(new PieEntry(10, "hz"));
                 entries.add(new PieEntry(15, "khz"));
 
