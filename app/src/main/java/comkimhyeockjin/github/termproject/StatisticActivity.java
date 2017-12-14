@@ -3,6 +3,7 @@ package comkimhyeockjin.github.termproject;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -36,7 +37,6 @@ import java.util.TreeMap;
 public class StatisticActivity extends AppCompatActivity {
     LinearLayout chart;
     Context mContext = this;
-    String filePath;
     TreeMap<Integer, String> treeMap = null;
     private PlaceDB placeDB;
     private LocationDB locationDB;
@@ -82,11 +82,7 @@ public class StatisticActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * TODO filePath 위치 지정하기.
-     */
     private void init(Context context) {
-//        filePath =
         placeDB = new PlaceDB(this);
         locationDB = new LocationDB(this);
         if (treeMap == null) {
@@ -118,6 +114,10 @@ public class StatisticActivity extends AppCompatActivity {
         List<Integer> colors = new ArrayList<Integer>();
         for (int c : ColorTemplate.PASTEL_COLORS)
             colors.add(c);
+        for (int c : ColorTemplate.COLORFUL_COLORS)
+            colors.add(c);
+
+        ArrayList<PlaceInfo> placeInfoArrayList = placeDB.getAllInfo();
 
         switch (chartId) {
             case PIE_CHART:
@@ -131,20 +131,14 @@ public class StatisticActivity extends AppCompatActivity {
 
                 PieChart pieChart = (PieChart) findViewById(R.id.pieChart);
                 ArrayList<PieEntry> entries = new ArrayList<>();
-                ArrayList<PlaceInfo> placeInfoArrayList = placeDB.getAllInfo();
+                //실제 데이터
                 if (placeInfoArrayList != null) {
                     for (PlaceInfo placeInfo : placeInfoArrayList) {
                         entries.add(new PieEntry((int) placeInfo.getTime(), placeInfo.getName()));
                     }
                 }
-                entries.add(new PieEntry(10, "hz"));
-                entries.add(new PieEntry(15, "khz"));
-
-                for (int i=0; i<locationName.length; i++) {
-                    entries.add(new PieEntry(time[i], locationName[i]));
-                }
             
-                PieDataSet dataSet = new PieDataSet(entries, "ban");
+                PieDataSet dataSet = new PieDataSet(entries, "장소명");
                 dataSet.setColors(colors);
                 dataSet.setSliceSpace(3f);
 
@@ -155,6 +149,7 @@ public class StatisticActivity extends AppCompatActivity {
                 pieChart.invalidate();
                 break;
             case LINE_CHART:
+                //TODO line chart랑 bar chart의 x축,y축 눈금 조정이 가능하면 조정.
                 /*
                 장소명을 먼저 배열에 저장.
                 장소명으로 저장된 머무른? 내역 확인해서 특정 시간(혹은 시간대)에 그 장소에 있었으면 freq[시간]에 1 추가.
@@ -168,13 +163,24 @@ public class StatisticActivity extends AppCompatActivity {
 
                 LineChart lineChart = (LineChart) findViewById(R.id.lineChart);
 
+                ArrayList<Double> latList = new ArrayList<>();
+                ArrayList<Double> lngList = new ArrayList<>();
+                if (placeInfoArrayList != null) {
+                    for (PlaceInfo placeInfo : placeInfoArrayList) {
+                        latList.add(placeInfo.getLat());
+                        lngList.add(placeInfo.getLng());
+                    }
+                    freq = calcFrequency(latList, lngList);
+                }
+
                 ArrayList<ILineDataSet> lineDataSets = new ArrayList<ILineDataSet>();
-                for (int i=0; i<locationName.length; i++) {
+                for (int i=0; i<freq.length; i++) {
                     ArrayList<Entry> lineEntries = new ArrayList<Entry>();
-                    for (int j=0; j<freq.length; j++) {
+                    for (int j=0; j<freq[0].length; j++) {
+                        Log.d("test", "i:"+i+", j:"+j);
                         lineEntries.add(new Entry(j, freq[i][j]));
                     }
-                    LineDataSet lineDataSet = new LineDataSet(lineEntries, locationName[i]);
+                    LineDataSet lineDataSet = new LineDataSet(lineEntries, placeInfoArrayList.get(i).getName());
                     lineDataSet.setColor(colors.get(i));
 
                     lineDataSets.add(lineDataSet);
@@ -193,9 +199,9 @@ public class StatisticActivity extends AppCompatActivity {
                  */
                 //더미 데이터
                 int[][] freqs = { {0, 20, 10, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                        {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10},
+                        {10, 40, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10},
                         {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20},
-                        {30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30} };
+                        {30, 30, 10, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30} };
 
                 BarChart barChart = (BarChart) findViewById(R.id.barChart);
 
@@ -220,6 +226,25 @@ public class StatisticActivity extends AppCompatActivity {
         }
     }
 
+    private int[][] calcFrequency(ArrayList<Double> latList, ArrayList<Double> lngList) {
+        ArrayList<LocationInfo> locationInfoArrayList = locationDB.getAllInfo();
+        int[][] freq = new int[latList.size()][24];
+        Log.d("test", "locationInfoArrayList.size():"+locationInfoArrayList.size());
+        for (int i=0; i<latList.size(); i++) {
+            for (LocationInfo locationInfo : locationInfoArrayList) {
+                if (latList.get(i)==locationInfo.getLat() && lngList.get(i)==locationInfo.getLng()) {
+                    Log.d("test", "날짜:"+locationInfo.getDate()+", time:"+locationInfo.getTime());
+                    int hour = Integer.parseInt(locationInfo.getDate().split(" ")[1].split(":")[0]);
+                    for (int h=0; h<locationInfo.getTime()/60 +1; h++) {
+                        freq[i][hour+h]++;
+                        Log.d("test", "freq["+i+"]["+(hour+h)+"] : "+freq[i][hour+h]);
+                    }
+                }
+            }
+        }
+        return freq;
+    }
+
     private int maxLocIndex(int[][] freq, int time) {
         int maxIndex = 0;
         for (int i=1; i<freq.length; i++) {
@@ -230,12 +255,11 @@ public class StatisticActivity extends AppCompatActivity {
     }
 
     /**
-     *  TODO : File에서 데이터를 읽어 map에 넣는 작업.
+     *  TODO : ?에서 데이터를 읽어 map에 넣는 작업.
      *  직접 다녔던 데이터를 read해서 Map에 넣어 return.
      */
     private void readLocationData() throws IOException {
         Map<String, Integer> tiemMap = new HashMap<>();
-//        File dataFile = new File(filePath);
 
     }
 
