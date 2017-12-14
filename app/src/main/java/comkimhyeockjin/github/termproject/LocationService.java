@@ -105,7 +105,10 @@ public class LocationService extends Service {
                             intent.putExtra("lat", curLat);
                             intent.putExtra("lng", curLng);
                             intent.putExtra("name", currentPlace.getName());
-                            intent.putExtra("cate", currentPlace.getPlaceTypes().get(0));
+                            switch (currentPlace.getPlaceTypes().get(0)) {
+
+                            }
+                            intent.putExtra("cate",currentPlace.getPlaceTypes().get(0) );
                             intent.putExtra("date", lastDate);
 
                             startActivity(intent);
@@ -125,13 +128,13 @@ public class LocationService extends Service {
                 } else {
                     Log.d("LocationService", task.getException().toString());
                 }
+
+                placeTime += timer;
+                if (timer < 900000) {
+                    timer *= 2;
+                }
             }
         });
-
-        placeTime += timer;
-        if (timer < 900000) {
-            timer *= 2;
-        }
 
     }
 
