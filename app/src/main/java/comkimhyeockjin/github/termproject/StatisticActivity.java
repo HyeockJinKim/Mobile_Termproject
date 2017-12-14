@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -146,6 +147,7 @@ public class StatisticActivity extends AppCompatActivity {
                 data.setValueFormatter(new PercentFormatter());
 
                 pieChart.setData(data);
+                pieChart.getDescription().setText("");
                 pieChart.invalidate();
                 break;
             case LINE_CHART:
@@ -177,7 +179,6 @@ public class StatisticActivity extends AppCompatActivity {
                 for (int i=0; i<freq.length; i++) {
                     ArrayList<Entry> lineEntries = new ArrayList<Entry>();
                     for (int j=0; j<freq[0].length; j++) {
-                        Log.d("test", "i:"+i+", j:"+j);
                         lineEntries.add(new Entry(j, freq[i][j]));
                     }
                     LineDataSet lineDataSet = new LineDataSet(lineEntries, placeInfoArrayList.get(i).getName());
@@ -189,6 +190,10 @@ public class StatisticActivity extends AppCompatActivity {
                 LineData lineData = new LineData(lineDataSets);
 
                 lineChart.setData(lineData);
+                lineChart.setVisibleXRange(0, 24);lineChart.getDescription().setText("");
+                lineChart.setVisibleYRange(0, 7, YAxis.AxisDependency.LEFT);
+
+                Log.d("test", "ScaleX:"+lineChart.getScaleX()+", ScaleY:"+lineChart.getScaleY());
                 lineChart.invalidate();
                 break;
             case BAR_CHART:
@@ -198,15 +203,15 @@ public class StatisticActivity extends AppCompatActivity {
                 엔트리 1개가 장소 1개.
                  */
                 //더미 데이터
-                int[][] freqs = { {0, 20, 10, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                        {10, 40, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10},
-                        {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20},
-                        {30, 30, 10, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30} };
+                int[][] freqs = { {0, 2, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                        {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
+                        {3, 3, 1, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3} };
 
                 BarChart barChart = (BarChart) findViewById(R.id.barChart);
 
                 ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
-                for (int t = 0; t < freqs.length; t++) {
+                for (int t = 0; t < freqs[0].length; t++) {
                     ArrayList<BarEntry> barEntry = new ArrayList<BarEntry>();
                     int max = maxLocIndex(freqs, t);
                     barEntry.add(new BarEntry(t+0.5f, freqs[max][t]));
@@ -221,6 +226,10 @@ public class StatisticActivity extends AppCompatActivity {
                 barData.setBarWidth(0.9f);  //bar 사이의 간격
 
                 barChart.setData(barData);
+
+                barChart.setVisibleXRange(0, 24);
+                barChart.setVisibleYRange(0, 7, YAxis.AxisDependency.LEFT);
+                barChart.getDescription().setText("");
                 barChart.invalidate();
                 break;
         }
