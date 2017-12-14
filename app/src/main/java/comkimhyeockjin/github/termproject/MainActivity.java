@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap googleMap = null;
     private Marker currentMarker = null;
     private Marker recommendMarker = null;
+    private boolean isFirst = true;
     Location mLastKnownLocation = null;
 
     // 목록 정렬을 위해 만들었음.
@@ -89,7 +90,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.d("MainActivity", "longitude =" + mLastKnownLocation.getLongitude() + ", latitude=" + mLastKnownLocation.getLatitude());
         }
         getDeviceLocation();
-        setCurrentLocation(mLastKnownLocation);
+        if (isFirst) {
+            setCurrentLocation(mLastKnownLocation);
+            isFirst = false;
+        }
+        Log.d("Main", "Map ready냐!!");
         // PlaceDB 에서 읽어와서 추가도 해줘야 할듯, 추가 완료.
         ArrayList<PlaceInfo> placeInfoArrayList = placeDB.getAllInfo();
         if (placeInfoArrayList != null) {
@@ -163,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     private void askSituation() {
         Intent intent = new Intent(getApplicationContext(), RecommendDialog.class);
-        startActivity(intent);
+        startActivityForResult(intent, DIALOG_REQUEST);
     }
 
     /**
@@ -178,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .getLastLocation(mGoogleApiClient);
 
         if (mLastKnownLocation != null) {
+            Log.d("Location", "Lat"+ mLastKnownLocation.getLatitude()+", "+"Long"+mLastKnownLocation.getLongitude());
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mLastKnownLocation.getLatitude(),
                             mLastKnownLocation.getLongitude()), 15)); // 15는 초기 zoom 값 (확대 값)
@@ -204,8 +210,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .title(placeName)
                         .draggable(false)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-                recommendMarker = this.googleMap.addMarker(markerOptions);
-                this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                recommendMarker = null;
+                recommendMarker = googleMap.addMarker(markerOptions);
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 
             } catch (NullPointerException e) {
                 e.printStackTrace();
@@ -250,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void onLocationChanged(Location location) {
             setCurrentLocation(location);
+            Log.d("Main", "listner 짓임.");
         }
     };
 
@@ -258,8 +266,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Location location = new Location("");
         location.setLatitude(DEFAULT_ZOOM.latitude);
         location.setLongitude((DEFAULT_ZOOM.longitude));
-
-        setCurrentLocation(location);
     }
 
     @Override
