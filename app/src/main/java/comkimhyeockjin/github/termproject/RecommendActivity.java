@@ -53,7 +53,7 @@ public class RecommendActivity extends AppCompatActivity {
                 double distance = item.getDistance();
                 Log.d("RecommendActivity", name+", "+distance);
                 //TODO 클릭하면 지도에 띄워야 하는거 아님?
-                Intent resultIntent = new Intent();
+                Intent resultIntent = new Intent(mContext, MainActivity.class);
                 resultIntent.putExtra("placeName", name);
                 resultIntent.putExtra("lat", item.getLat());
                 resultIntent.putExtra("lng", item.getLng());
