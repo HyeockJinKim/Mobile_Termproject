@@ -93,11 +93,14 @@ public class LocationService extends Service {
 
                     double curLat = currentPlace.getLatLng().latitude;
                     double curLng = currentPlace.getLatLng().longitude;
+                    String name;
                     if (Math.pow(mLastKnownLocation.getLatitude()-DEFAULT_ZONE.latitude,2)+Math.pow(mLastKnownLocation.getLongitude()-DEFAULT_ZONE.longitude,2) >
                             Math.pow(mLastKnownLocation.getLatitude()-curLat,2)+Math.pow(mLastKnownLocation.getLongitude()-curLng,2)) {
-
+                        name = currentPlace.getName().toString();
                     } else {
-
+                        curLat = DEFAULT_ZONE.latitude;
+                        curLng = DEFAULT_ZONE.longitude;
+                        name = "공대 5호관";
                     }
                     if (lat == curLat && lng == curLng) {
                         placeTime += timer;
@@ -126,7 +129,7 @@ public class LocationService extends Service {
                             intent.putExtra("time", (placeTime / 60000)); // 분 단위로 보내줌.
                             intent.putExtra("lat", curLat);
                             intent.putExtra("lng", curLng);
-                            intent.putExtra("name", currentPlace.getName());
+                            intent.putExtra("name", name);
                             switch (currentPlace.getPlaceTypes().get(0)) {
 
                             }
@@ -173,6 +176,6 @@ public class LocationService extends Service {
                 .addApi(Places.PLACE_DETECTION_API)
                 .build();
         mGoogleApiClient.connect();
-        DEFAULT_ZONE = new LatLng(36.365514999999999,127.345202);
+        DEFAULT_ZONE = new LatLng(36.3665928,127.3443893);
     }
 }
