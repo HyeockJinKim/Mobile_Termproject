@@ -38,13 +38,7 @@ public class RecommendActivity extends AppCompatActivity {
         //일단 임의로
         recommendAdapter.addItem(new RecommendItem("name1", 10, "category1", 34.9, 127.5));
         recommendAdapter.addItem(new RecommendItem("name2", 20, "category2", 36.9, 127.5));
-
-        //TODO 어댑터에 아이템 추가해야 함.
-        //일단 임의로
-        recommendAdapter.addItem(new RecommendItem("name1", 10, "category1", 34.9, 127.5));
-        recommendAdapter.addItem(new RecommendItem("name2", 20, "category2", 36.9, 127.5));
-
-
+        
         recommendList.setAdapter(recommendAdapter);
 
         recommendList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
