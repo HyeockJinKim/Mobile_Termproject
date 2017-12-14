@@ -118,6 +118,8 @@ public class StatisticActivity extends AppCompatActivity {
         List<Integer> colors = new ArrayList<Integer>();
         for (int c : ColorTemplate.PASTEL_COLORS)
             colors.add(c);
+        for (int c : ColorTemplate.COLORFUL_COLORS)
+            colors.add(c);
 
         switch (chartId) {
             case PIE_CHART:
@@ -131,14 +133,13 @@ public class StatisticActivity extends AppCompatActivity {
 
                 PieChart pieChart = (PieChart) findViewById(R.id.pieChart);
                 ArrayList<PieEntry> entries = new ArrayList<>();
+                //실제 데이터?
                 ArrayList<PlaceInfo> placeInfoArrayList = placeDB.getAllInfo();
                 if (placeInfoArrayList != null) {
                     for (PlaceInfo placeInfo : placeInfoArrayList) {
                         entries.add(new PieEntry((int) placeInfo.getTime(), placeInfo.getName()));
                     }
                 }
-                entries.add(new PieEntry(10, "hz"));
-                entries.add(new PieEntry(15, "khz"));
 
                 for (int i=0; i<locationName.length; i++) {
                     entries.add(new PieEntry(time[i], locationName[i]));
