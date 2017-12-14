@@ -3,6 +3,7 @@ package comkimhyeockjin.github.termproject;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -116,6 +117,8 @@ public class StatisticActivity extends AppCompatActivity {
         for (int c : ColorTemplate.COLORFUL_COLORS)
             colors.add(c);
 
+        ArrayList<PlaceInfo> placeInfoArrayList = placeDB.getAllInfo();
+
         switch (chartId) {
             case PIE_CHART:
                 /*
@@ -128,8 +131,7 @@ public class StatisticActivity extends AppCompatActivity {
 
                 PieChart pieChart = (PieChart) findViewById(R.id.pieChart);
                 ArrayList<PieEntry> entries = new ArrayList<>();
-                //실제 데이터?
-                ArrayList<PlaceInfo> placeInfoArrayList = placeDB.getAllInfo();
+                //실제 데이터
                 if (placeInfoArrayList != null) {
                     for (PlaceInfo placeInfo : placeInfoArrayList) {
                         entries.add(new PieEntry((int) placeInfo.getTime(), placeInfo.getName()));
@@ -159,6 +161,16 @@ public class StatisticActivity extends AppCompatActivity {
                                 {30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30} };
 
                 LineChart lineChart = (LineChart) findViewById(R.id.lineChart);
+
+                ArrayList<Double> latList = new ArrayList<>();
+                ArrayList<Double> lngList = new ArrayList<>();
+                if (placeInfoArrayList != null) {
+                    for (PlaceInfo placeInfo : placeInfoArrayList) {
+                        latList.add(placeInfo.getLat());
+                        lngList.add(placeInfo.getLng());
+                    }
+                }
+                calcFrequency(latList, lngList, freq);
 
                 ArrayList<ILineDataSet> lineDataSets = new ArrayList<ILineDataSet>();
                 for (int i=0; i<locationName.length; i++) {
@@ -209,6 +221,23 @@ public class StatisticActivity extends AppCompatActivity {
                 barChart.setData(barData);
                 barChart.invalidate();
                 break;
+        }
+    }
+
+    private void calcFrequency(ArrayList<Double> latList, ArrayList<Double> lngList, int[][] freq) {
+        ArrayList<LocationInfo> locationInfoArrayList = locationDB.getAllInfo();
+        freq = new int[latList.size()][24];
+        for (int i=0; i<latList.size(); i++) {
+            for (LocationInfo locationInfo : locationInfoArrayList) {
+                if (latList.get(i)==locationInfo.getLat() && lngList.get(i)==locationInfo.getLng()) {
+                    Log.d("test", "날짜:"+locationInfo.getDate());
+                    int hour = Integer.parseInt(locationInfo.getDate().split(" ")[1].split(":")[0]);
+                    for (int h=0; h<locationInfo.getTime()/60; h++) {
+                        freq[i][hour+h]++;
+                        Log.d("test", "freq["+i+"]["+(hour+h)+"] : "+freq[i][hour+h]);
+                    }
+                }
+            }
         }
     }
 
