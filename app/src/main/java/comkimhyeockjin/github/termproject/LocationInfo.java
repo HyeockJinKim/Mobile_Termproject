@@ -4,15 +4,18 @@ package comkimhyeockjin.github.termproject;
  * Created by user on 2017-11-27.
  */
 
+/**
+ * 시간 순으로 적히는 것.
+ */
 public class LocationInfo {
 
     public int id;
     public String date;
     public double lng;
     public double lat;
-    public double time;
+    public int time;
 
-    public LocationInfo(int id, String date, double lng, double lat, double time) {
+    public LocationInfo(int id, String date, double lng, double lat, int time) {
         this.id = id;
         this.date = date;
         this.lng = lng;
@@ -52,7 +55,7 @@ public class LocationInfo {
         this.lat = lat;
     }
 
-    public double getTime() {
+    public int getTime() {
         return time;
     }
 

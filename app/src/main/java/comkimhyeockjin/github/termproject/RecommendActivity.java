@@ -2,12 +2,11 @@ package comkimhyeockjin.github.termproject;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -21,6 +20,7 @@ public class RecommendActivity extends AppCompatActivity {
 
     /**
      * TODO 같이 가는 사람, 시간으로 분석한 추천 장소 입력.
+     * TODO 추가! 반환할 때는 placeName lat, lng 값을 intent 값에 추가한 후 finish.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {

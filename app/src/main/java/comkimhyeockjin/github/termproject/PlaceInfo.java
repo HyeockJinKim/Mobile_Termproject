@@ -9,13 +9,13 @@ public class PlaceInfo {
     public int id;
     public double lng;
     public double lat;
-    public double time;
+    public int time;
     public int star;
     public String name;
     public String memo;
     public String category;
 
-    public PlaceInfo(int id, double lng, double lat, double time, int star, String name, String memo, String category) {
+    public PlaceInfo(int id, double lng, double lat, int time, int star, String name, String memo, String category) {
         this.id = id;
         this.lng = lng;
         this.lat = lat;
@@ -50,11 +50,11 @@ public class PlaceInfo {
         this.lat = lat;
     }
 
-    public double getTime() {
+    public int getTime() {
         return time;
     }
 
-    public void setTime(double time) {
+    public void setTime(int time) {
         this.time = time;
     }
 

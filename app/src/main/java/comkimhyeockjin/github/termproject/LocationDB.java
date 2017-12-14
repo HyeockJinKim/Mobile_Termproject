@@ -82,7 +82,7 @@ public class LocationDB extends SQLiteOpenHelper {
     }
 
     // Create
-    public boolean insertInfo(String date, double lng, double lat, double time, int star, String memo, String category) {
+    public boolean insertInfo(String date, double lng, double lat, int time) {
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(DATE, date);
@@ -110,7 +110,7 @@ public class LocationDB extends SQLiteOpenHelper {
                 String date = cursor.getString(indexDate);
                 double lng = cursor.getDouble(indexLng);
                 double lat = cursor.getDouble(indexLat);
-                double time = cursor.getInt(indexTime);
+                int time = cursor.getInt(indexTime);
 
                 info.add(new LocationInfo(id, date, lng, lat, time));
             } while (cursor.moveToNext());
