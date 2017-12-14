@@ -19,13 +19,13 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.06999999" ></LinearLayout>
+        app:layout_constraintVertical_bias="0.06999999" />
 
     <Button
         android:id="@+id/lineBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Line"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/line_chart"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
@@ -39,9 +39,9 @@
 
     <Button
         android:id="@+id/barBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="bar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/bar_chart"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
@@ -54,9 +54,9 @@
 
     <Button
         android:id="@+id/pieBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="pie"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/pie"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_marginRight="8dp"

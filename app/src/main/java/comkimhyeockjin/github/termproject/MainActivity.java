@@ -97,8 +97,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (isFirst) {
             setCurrentLocation(mLastKnownLocation);
             isFirst = false;
+        } else {
+
         }
-        Log.d("Main", "Map ready냐!!");
         // PlaceDB 에서 읽어와서 추가도 해줘야 할듯, 추가 완료.
         ArrayList<PlaceInfo> placeInfoArrayList = placeDB.getAllInfo();
         if (placeInfoArrayList != null) {
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .title(placeInfo.getName())
                         .snippet(placeInfo.getMemo())
                         .draggable(false)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.mark));
                 this.googleMap.addMarker(markerOptions);
             }
         }
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .title(myTitle)
                     .snippet(myContent)
                     .draggable(false)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.mine));
             currentMarker = this.googleMap.addMarker(markerOptions);
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
         } else {
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .title(myTitle)
                     .snippet(myContent)
                     .draggable(false)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.mine));
             currentMarker = this.googleMap.addMarker(markerOptions);
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_ZOOM));
         }
@@ -213,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .position(latLng)
                         .title(placeName)
                         .draggable(false)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.question));
                 recommendMarker = null;
                 recommendMarker = googleMap.addMarker(markerOptions);
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));

@@ -12,11 +12,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-
+import java.text.DecimalFormat;
 import java.util.Calendar;
 
 public class RecommendDialog extends Activity {
@@ -26,18 +22,19 @@ public class RecommendDialog extends Activity {
     String[] spinnerItems = {"혼자", "사람1", "사람2", "사람3"};
     String currentPersonName;
     String currentTime;
+    DecimalFormat decimalFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ask_dialog);
         this.setTitle("어디로 갈까?");
-
+        decimalFormat = new DecimalFormat("00");
         Calendar calendar = Calendar.getInstance();
         hour = calendar.get(Calendar.HOUR_OF_DAY);
         min = calendar.get(Calendar.MINUTE);
         timeBtn = (Button) findViewById(R.id.timeBtn);
-        timeBtn.setText(hour+":"+min);
+        timeBtn.setText(decimalFormat.format(hour)+"시 "+decimalFormat.format(min) + "분");
         currentTime = hour+":"+min;
 
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
@@ -82,7 +79,7 @@ public class RecommendDialog extends Activity {
             public void onTimeSet(TimePicker v, int hh, int mm) {
                 //버튼에 설정한 시간 보여주기.
                 hour = hh; min = mm;
-                timeBtn.setText(hour+":"+min);
+                timeBtn.setText(decimalFormat.format(hour)+"시 "+decimalFormat.format(min) + "분");
                 currentTime = hh+":"+mm;
             }
         };
