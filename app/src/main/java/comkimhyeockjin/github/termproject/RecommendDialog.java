@@ -60,17 +60,14 @@ public class RecommendDialog extends Activity {
         finish();
     }
 
-
     public void startRecommendActivity(View v) {
-        finish();
-
-        Intent intent = new Intent(getApplicationContext(), RecommendActivity.class);
+        Intent intent = new Intent();
         // personName, time은 dialog에서 입력받은 값으로...
         String personName = currentPersonName;
         String time = currentTime;
         intent.putExtra("personName", personName);
         intent.putExtra("time", time);
-        startActivityForResult(intent, RECOMMEND_REQUEST);
+        finish();
     }
 
     public void timeBtnClick(View v) {
