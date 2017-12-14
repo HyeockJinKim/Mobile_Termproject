@@ -12,6 +12,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceDetectionClient;
 import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -22,12 +23,12 @@ public class LocationService extends Service {
     private PlaceDetectionClient mPlaceDetectionClient;
     private int timer = 60000;
     private int placeTime = 0;
-    private String lastPlace = "";
     private String lastDate = "";
     private double lat;
     private double lng;
     private Context mContext;
     private Handler handler;
+    private LatLng DEFAULT_ZONE;
 
     private LocationDB locationDB;
     private PlaceDB placeDB;
@@ -79,10 +80,11 @@ public class LocationService extends Service {
                     double curLat = currentPlace.getLatLng().latitude;
                     double curLng = currentPlace.getLatLng().longitude;
                     if (lat == curLat && lng == curLng) {
-
-                        if (timer > 60000) {
-                            timer /= 4;
+                        placeTime += timer;
+                        if (timer < 900000) {
+                            timer *= 2;
                         }
+
                         // DB 저장 필요.
                         // 창을 띄워서 별점같은 것을 받아야함.
                         if (placeDB.checkInfo(lat, lng)) {
@@ -117,9 +119,12 @@ public class LocationService extends Service {
                         placeTime = 0;
                         return ;
                     }
+                    placeTime = 0;
+                    if (timer > 120000) {
+                        timer /= 4;
+                    }
                     lat = curLat;
                     lng = curLng;
-                    lastPlace =  currentPlace.getName().toString();
                     lastDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date(System.currentTimeMillis()));
 
                     Log.d("MainActivity", "name : " + currentPlace.getName() + "long : " + currentPlace.getLatLng().longitude
@@ -129,10 +134,7 @@ public class LocationService extends Service {
                     Log.d("LocationService", task.getException().toString());
                 }
 
-                placeTime += timer;
-                if (timer < 900000) {
-                    timer *= 2;
-                }
+
             }
         });
 
@@ -145,5 +147,6 @@ public class LocationService extends Service {
         mContext = this;
         handler = new Handler();
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
+        DEFAULT_ZONE = new LatLng(36.365514999999999,127.345202);
     }
 }

@@ -13,13 +13,16 @@ public class LocationInfo {
     public String date;
     public double lng;
     public double lat;
+    public String friend;
     public int time;
 
-    public LocationInfo(int id, String date, double lng, double lat, int time) {
+
+    public LocationInfo(int id, String date, double lng, double lat, String friend, int time) {
         this.id = id;
         this.date = date;
         this.lng = lng;
         this.lat = lat;
+        this.friend = friend;
         this.time = time;
     }
 
@@ -53,6 +56,14 @@ public class LocationInfo {
 
     public void setLat(double lat) {
         this.lat = lat;
+    }
+
+    public String getFriend() {
+        return friend;
+    }
+
+    public void setFriend(String friend) {
+        this.friend = friend;
     }
 
     public int getTime() {

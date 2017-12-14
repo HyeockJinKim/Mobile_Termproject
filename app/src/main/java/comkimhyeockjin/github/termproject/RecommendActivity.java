@@ -3,8 +3,8 @@ package comkimhyeockjin.github.termproject;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -34,10 +34,6 @@ public class RecommendActivity extends AppCompatActivity {
 
         ListView recommendList = (ListView) findViewById(R.id.recommendList);
         recommendAdapter = new RecommendAdapter();
-        //TODO 어댑터에 아이템 추가해야 함.
-        //일단 임의로
-        recommendAdapter.addItem(new RecommendItem("name1", 10, "category1"));
-        recommendAdapter.addItem(new RecommendItem("name2", 20, "category2"));
 
         //TODO 어댑터에 아이템 추가해야 함.
         //일단 임의로
@@ -57,7 +53,10 @@ public class RecommendActivity extends AppCompatActivity {
                 double distance = item.getDistance();
                 Log.d("RecommendActivity", name+", "+distance);
                 //TODO 클릭하면 지도에 띄워야 하는거 아님?
-                Intent resultIntent = new Intent();
+                Intent resultIntent = new Intent(mContext, MainActivity.class);
+                resultIntent.putExtra("placeName", name);
+                resultIntent.putExtra("lat", item.getLat());
+                resultIntent.putExtra("lng", item.getLng());
                 setResult(RESULT_OK, resultIntent);
                 finish();
             }
