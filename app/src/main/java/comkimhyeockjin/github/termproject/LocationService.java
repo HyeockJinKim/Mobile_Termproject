@@ -3,6 +3,7 @@ package comkimhyeockjin.github.termproject;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -26,6 +27,7 @@ public class LocationService extends Service {
     private double lat;
     private double lng;
     private Context mContext;
+    private Handler handler;
 
     private LocationDB locationDB;
     private PlaceDB placeDB;
@@ -53,18 +55,15 @@ public class LocationService extends Service {
     }
 
     public void checkLocation() {
-        while (true) {
-            checkCurrentPlace();
-            try {
-                Thread.sleep(timer);
-                placeTime += timer;
-                if (timer < 900000) {
-                    timer *= 2;
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                checkCurrentPlace();
+                handler.postDelayed(this, timer);
             }
-        }
+        };
+
+        handler.postDelayed(runnable, 0);
     }
 
     private void checkCurrentPlace() {
@@ -106,7 +105,10 @@ public class LocationService extends Service {
                             intent.putExtra("lat", curLat);
                             intent.putExtra("lng", curLng);
                             intent.putExtra("name", currentPlace.getName());
-                            intent.putExtra("cate", currentPlace.getPlaceTypes().get(0));
+                            switch (currentPlace.getPlaceTypes().get(0)) {
+
+                            }
+                            intent.putExtra("cate",currentPlace.getPlaceTypes().get(0) );
                             intent.putExtra("date", lastDate);
 
                             startActivity(intent);
@@ -126,8 +128,15 @@ public class LocationService extends Service {
                 } else {
                     Log.d("LocationService", task.getException().toString());
                 }
+
+                placeTime += timer;
+                if (timer < 900000) {
+                    timer *= 2;
+                }
             }
         });
+
+
 
     }
 
@@ -136,6 +145,7 @@ public class LocationService extends Service {
     public void onCreate() {
         super.onCreate();
         mContext = this;
+        handler = new Handler();
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
     }
 }
