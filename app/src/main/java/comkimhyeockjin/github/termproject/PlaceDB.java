@@ -72,7 +72,7 @@ public class PlaceDB extends SQLiteOpenHelper {
     }
 
     // Create
-    public boolean insertInfo(double lng, double lat, double time, int star, String name, String memo, String category) {
+    public boolean insertInfo(double lng, double lat, int time, int star, String name, String memo, String category) {
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(LNG, lng);
@@ -105,7 +105,7 @@ public class PlaceDB extends SQLiteOpenHelper {
                 int id = cursor.getInt(indexId);
                 double lng = cursor.getDouble(indexLng);
                 double lat = cursor.getDouble(indexLat);
-                double time = cursor.getInt(indexTime);
+                int time = cursor.getInt(indexTime);
                 int star = cursor.getInt(indexStar);
                 String name = cursor.getString(indexName);
                 String memo = cursor.getString(indexMemo);
@@ -133,6 +133,13 @@ public class PlaceDB extends SQLiteOpenHelper {
         String[] params = new String[]{Integer.toString(placeInfo.getId())};
         int result = db.update(TABLE_NAME, contentValues, ID + "=?", params);
         return result > 0;
+    }
+
+    public boolean checkInfo(double lat, double lng) {
+        Cursor cursor = db.rawQuery("select * from table where lat = "+lat+ "and lng = "+lng+";", null);
+
+
+        return cursor.moveToFirst();
     }
 
     // Delete

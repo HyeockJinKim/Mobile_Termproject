@@ -1,6 +1,7 @@
 package comkimhyeockjin.github.termproject;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -16,10 +17,11 @@ import com.google.android.gms.tasks.Task;
 public class LocationService extends Service {
     private PlaceDetectionClient mPlaceDetectionClient;
     private int timer = 60000;
-    private double placeTime = 0;
+    private int placeTime = 0;
     private String lastPlace = "";
     private double lat;
     private double lng;
+    private Context mContext;
 
     private LocationDB locationDB;
     private PlaceDB placeDB;
@@ -80,8 +82,15 @@ public class LocationService extends Service {
                         }
                         // DB 저장 필요.
                         // 창을 띄워서 별점같은 것을 받아야함.
+                        Intent intent = new Intent(mContext, ServiceAsk.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra("time", (placeTime/60000)); // 분 단위로 보내줌.
+                        intent.putExtra("lat", curLat);
+                        intent.putExtra("lng", curLng);
+                        intent.putExtra("name", currentPlace.getName());
+                        intent.putExtra("cate", currentPlace.getPlaceTypes().get(0));
 
-
+                        startActivity(intent);
 
                         placeTime = 0;
                         return ;
@@ -105,6 +114,7 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        mContext = this;
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
     }
 }
