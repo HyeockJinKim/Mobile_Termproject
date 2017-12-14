@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 public class RecommendActivity extends AppCompatActivity {
     RecommendAdapter recommendAdapter;
-    public static final int RECOMMEND_REQUEST = 1;
     Context mContext = this;
 
     /**
@@ -38,6 +37,7 @@ public class RecommendActivity extends AppCompatActivity {
         //일단 임의로
         recommendAdapter.addItem(new RecommendItem("name1", 10, "category1", 34.9, 127.5));
         recommendAdapter.addItem(new RecommendItem("name2", 20, "category2", 36.9, 127.5));
+        recommendAdapter.addItem(new RecommendItem("name3", 30, "category3", 50.9, 127.5));
         
         recommendList.setAdapter(recommendAdapter);
 
@@ -50,8 +50,13 @@ public class RecommendActivity extends AppCompatActivity {
                 String name = item.getLocationName();
                 double distance = item.getDistance();
                 Log.d("RecommendActivity", name+", "+distance);
-                //TODO 클릭하면 지도에 띄워야 하는거 아님?
+
                 Intent resultIntent = new Intent();
+                resultIntent.putExtra("placeName", name);
+                resultIntent.putExtra("lat", item.getLat());
+                resultIntent.putExtra("lng", item.getLng());
+                Log.d("test", "RecoActivity에서 인텐트 보냄.");
+                Log.d("test", item.getLat()+", "+item.getLng());
                 setResult(RESULT_OK, resultIntent);
                 finish();
             }
