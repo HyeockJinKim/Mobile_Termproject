@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
@@ -29,6 +30,7 @@ public class RecommendActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String name = intent.getExtras().getString("personName");
         String time = intent.getExtras().getString("time");
+        Log.d("RecommendActivity", "personName:"+name+", time:"+time);
 
         ListView recommendList = (ListView) findViewById(R.id.recommendList);
         recommendAdapter = new RecommendAdapter();
