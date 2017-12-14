@@ -169,16 +169,17 @@ public class StatisticActivity extends AppCompatActivity {
                         latList.add(placeInfo.getLat());
                         lngList.add(placeInfo.getLng());
                     }
+                    freq = calcFrequency(latList, lngList);
                 }
-                calcFrequency(latList, lngList, freq);
 
                 ArrayList<ILineDataSet> lineDataSets = new ArrayList<ILineDataSet>();
-                for (int i=0; i<locationName.length; i++) {
+                for (int i=0; i<freq.length; i++) {
                     ArrayList<Entry> lineEntries = new ArrayList<Entry>();
-                    for (int j=0; j<freq.length; j++) {
+                    for (int j=0; j<freq[0].length; j++) {
+                        Log.d("test", "i:"+i+", j:"+j);
                         lineEntries.add(new Entry(j, freq[i][j]));
                     }
-                    LineDataSet lineDataSet = new LineDataSet(lineEntries, locationName[i]);
+                    LineDataSet lineDataSet = new LineDataSet(lineEntries, placeInfoArrayList.get(i).getName());
                     lineDataSet.setColor(colors.get(i));
 
                     lineDataSets.add(lineDataSet);
@@ -224,21 +225,23 @@ public class StatisticActivity extends AppCompatActivity {
         }
     }
 
-    private void calcFrequency(ArrayList<Double> latList, ArrayList<Double> lngList, int[][] freq) {
+    private int[][] calcFrequency(ArrayList<Double> latList, ArrayList<Double> lngList) {
         ArrayList<LocationInfo> locationInfoArrayList = locationDB.getAllInfo();
-        freq = new int[latList.size()][24];
+        int[][] freq = new int[latList.size()][24];
+        Log.d("test", "locationInfoArrayList.size():"+locationInfoArrayList.size());
         for (int i=0; i<latList.size(); i++) {
             for (LocationInfo locationInfo : locationInfoArrayList) {
                 if (latList.get(i)==locationInfo.getLat() && lngList.get(i)==locationInfo.getLng()) {
-                    Log.d("test", "날짜:"+locationInfo.getDate());
+                    Log.d("test", "날짜:"+locationInfo.getDate()+", time:"+locationInfo.getTime());
                     int hour = Integer.parseInt(locationInfo.getDate().split(" ")[1].split(":")[0]);
-                    for (int h=0; h<locationInfo.getTime()/60; h++) {
+                    for (int h=0; h<locationInfo.getTime()/60 +1; h++) {
                         freq[i][hour+h]++;
                         Log.d("test", "freq["+i+"]["+(hour+h)+"] : "+freq[i][hour+h]);
                     }
                 }
             }
         }
+        return freq;
     }
 
     private int maxLocIndex(int[][] freq, int time) {
