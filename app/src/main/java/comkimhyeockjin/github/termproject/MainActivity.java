@@ -97,8 +97,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (isFirst) {
             setCurrentLocation(mLastKnownLocation);
             isFirst = false;
+        } else {
+
         }
-        Log.d("Main", "Map ready냐!!");
         // PlaceDB 에서 읽어와서 추가도 해줘야 할듯, 추가 완료.
         ArrayList<PlaceInfo> placeInfoArrayList = placeDB.getAllInfo();
         if (placeInfoArrayList != null) {
