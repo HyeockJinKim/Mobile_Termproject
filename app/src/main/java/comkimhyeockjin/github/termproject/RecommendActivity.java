@@ -34,10 +34,6 @@ public class RecommendActivity extends AppCompatActivity {
 
         ListView recommendList = (ListView) findViewById(R.id.recommendList);
         recommendAdapter = new RecommendAdapter();
-        //TODO 어댑터에 아이템 추가해야 함.
-        //일단 임의로
-        recommendAdapter.addItem(new RecommendItem("name1", 10, "category1"));
-        recommendAdapter.addItem(new RecommendItem("name2", 20, "category2"));
 
         //TODO 어댑터에 아이템 추가해야 함.
         //일단 임의로
