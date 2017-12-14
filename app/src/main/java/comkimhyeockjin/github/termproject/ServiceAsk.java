@@ -17,6 +17,7 @@ public class ServiceAsk extends Activity {
     EditText memo;
     double lat;
     double lng;
+    String date;
     int time;
 
     @Override
@@ -36,20 +37,15 @@ public class ServiceAsk extends Activity {
         star.setRating(0.5f);
 
         try {
+
             Intent intent = getIntent();
             lat = intent.getExtras().getDouble("lat");
             lng = intent.getExtras().getDouble("lng");
             time = intent.getExtras().getInt("time");
             placeName.setText(intent.getExtras().getString("name"));
             cate.setText(intent.getExtras().getString("cate"));
+            date = intent.getExtras().getString("date");
 
-
-            if (placeDB.checkInfo(lat, lng)) {
-                
-            } else {
-                placeDB.insertInfo(lng, lat, time, (int) (star.getRating() * 2),
-                        placeName.getText().toString(), memo.getText().toString(), cate.getText().toString());
-            }
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -57,8 +53,9 @@ public class ServiceAsk extends Activity {
     }
 
     public void clickOk(View view){
-
-
+        locationDB.insertInfo(date, lng, lat, time);
+        placeDB.insertInfo(lng, lat, time, (int) (star.getRating() * 2),
+                placeName.getText().toString(), memo.getText().toString(), cate.getText().toString());
 
         finish();
     }
