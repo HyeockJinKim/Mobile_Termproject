@@ -212,13 +212,23 @@ public class StatisticActivity extends AppCompatActivity {
 
                 BarChart barChart = (BarChart) findViewById(R.id.barChart);
 
+                latList = new ArrayList<>();
+                lngList = new ArrayList<>();
+                if (placeInfoArrayList != null) {
+                    for (PlaceInfo placeInfo : placeInfoArrayList) {
+                        latList.add(placeInfo.getLat());
+                        lngList.add(placeInfo.getLng());
+                    }
+                    freqs = calcFrequency(latList, lngList);
+                }
+
                 ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
                 for (int t = 0; t < freqs[0].length; t++) {
                     ArrayList<BarEntry> barEntry = new ArrayList<BarEntry>();
                     int max = maxLocIndex(freqs, t);
                     barEntry.add(new BarEntry(t+0.5f, freqs[max][t]));
 
-                    BarDataSet barDataSet = new BarDataSet(barEntry, locationName[max]);
+                    BarDataSet barDataSet = new BarDataSet(barEntry, placeInfoArrayList.get(max).getName());
                     barDataSet.setColors(colors.get(max));
 
                     dataSets.add(barDataSet);
