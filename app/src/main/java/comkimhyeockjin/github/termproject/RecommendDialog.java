@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -32,14 +33,26 @@ public class RecommendDialog extends Activity {
         hour = calendar.get(Calendar.HOUR_OF_DAY);
         min = calendar.get(Calendar.MINUTE);
         timeBtn = (Button) findViewById(R.id.timeBtn);
-        Log.d("TimePicker", (timeBtn==null)?"null":timeBtn.getText().toString());
         timeBtn.setText(hour+":"+min);
+        currentTime = hour+":"+min;
 
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerItems);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         //TODO 스피너 클릭리스너 구현. https://developer.android.com/guide/topics/ui/controls/spinner.html?hl=ko#SelectListener 참고.
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+                Log.d("스피너 클릭리스너", adapterView.getSelectedItem().toString());
+                currentPersonName = adapterView.getSelectedItem().toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
 
@@ -67,6 +80,7 @@ public class RecommendDialog extends Activity {
                 //버튼에 설정한 시간 보여주기.
                 hour = hh; min = mm;
                 timeBtn.setText(hour+":"+min);
+                currentTime = hh+":"+mm;
             }
         };
         TimePickerDialog dialog = new TimePickerDialog(this,listener, hour, min, false);
