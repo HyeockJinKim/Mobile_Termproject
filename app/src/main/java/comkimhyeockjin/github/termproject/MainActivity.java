@@ -62,10 +62,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        placeDB = new PlaceDB(this);
         permissionCheck();
+        placeDB = new PlaceDB(this);
         setButtonClickListener();
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */,
                         this /* OnConnectionFailedListener */)
@@ -237,6 +241,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             case PERMISSION_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(mContext, "Location 권한 승인", Toast.LENGTH_SHORT).show();
+                    mGoogleApiClient = new GoogleApiClient.Builder(this)
+                            .enableAutoManage(this /* FragmentActivity */,
+                                    this /* OnConnectionFailedListener */)
+                            .addConnectionCallbacks(this)
+                            .addApi(LocationServices.API)
+                            .addApi(Places.GEO_DATA_API)
+                            .addApi(Places.PLACE_DETECTION_API)
+                            .build();
+                    mGoogleApiClient.connect();
+                    Intent intent = new Intent(mContext, LocationService.class);
+                    startService(intent);
                 } else {
                     Toast.makeText(mContext, "Location 권한 없음", Toast.LENGTH_SHORT).show();
                 }

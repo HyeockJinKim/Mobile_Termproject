@@ -130,9 +130,8 @@ public class LocationService extends Service {
                             intent.putExtra("lat", curLat);
                             intent.putExtra("lng", curLng);
                             intent.putExtra("name", name);
-                            switch (currentPlace.getPlaceTypes().get(0)) {
+                            selectCategory(currentPlace.getPlaceTypes().get(0));
 
-                            }
                             intent.putExtra("cate", currentPlace.getPlaceTypes().get(0));
                             intent.putExtra("date", lastDate);
 
@@ -156,13 +155,9 @@ public class LocationService extends Service {
                 } else {
                     Log.d("LocationService", task.getException().toString());
                 }
-
-
             }
         });
-
     }
-
 
     @Override
     public void onCreate() {
@@ -178,4 +173,13 @@ public class LocationService extends Service {
         mGoogleApiClient.connect();
         DEFAULT_ZONE = new LatLng(36.3665928,127.3443893);
     }
+
+    private void selectCategory(int category) {
+        switch (category) {
+
+        }
+    }
+
+
+
 }
