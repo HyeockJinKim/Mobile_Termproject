@@ -36,7 +36,6 @@ import java.util.TreeMap;
 public class StatisticActivity extends AppCompatActivity {
     LinearLayout chart;
     Context mContext = this;
-    String filePath;
     TreeMap<Integer, String> treeMap = null;
     private PlaceDB placeDB;
     private LocationDB locationDB;
@@ -82,11 +81,7 @@ public class StatisticActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * TODO filePath 위치 지정하기.
-     */
     private void init(Context context) {
-//        filePath =
         placeDB = new PlaceDB(this);
         locationDB = new LocationDB(this);
         if (treeMap == null) {
@@ -140,12 +135,8 @@ public class StatisticActivity extends AppCompatActivity {
                         entries.add(new PieEntry((int) placeInfo.getTime(), placeInfo.getName()));
                     }
                 }
-
-                for (int i=0; i<locationName.length; i++) {
-                    entries.add(new PieEntry(time[i], locationName[i]));
-                }
             
-                PieDataSet dataSet = new PieDataSet(entries, "ban");
+                PieDataSet dataSet = new PieDataSet(entries, "장소명");
                 dataSet.setColors(colors);
                 dataSet.setSliceSpace(3f);
 
@@ -231,12 +222,11 @@ public class StatisticActivity extends AppCompatActivity {
     }
 
     /**
-     *  TODO : File에서 데이터를 읽어 map에 넣는 작업.
+     *  TODO : ?에서 데이터를 읽어 map에 넣는 작업.
      *  직접 다녔던 데이터를 read해서 Map에 넣어 return.
      */
     private void readLocationData() throws IOException {
         Map<String, Integer> tiemMap = new HashMap<>();
-//        File dataFile = new File(filePath);
 
     }
 
