@@ -3,8 +3,8 @@ package comkimhyeockjin.github.termproject;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -54,6 +54,9 @@ public class RecommendActivity extends AppCompatActivity {
                 Log.d("RecommendActivity", name+", "+distance);
                 //TODO 클릭하면 지도에 띄워야 하는거 아님?
                 Intent resultIntent = new Intent();
+                resultIntent.putExtra("placeName", name);
+                resultIntent.putExtra("lat", item.getLat());
+                resultIntent.putExtra("lng", item.getLng());
                 setResult(RESULT_OK, resultIntent);
                 finish();
             }
