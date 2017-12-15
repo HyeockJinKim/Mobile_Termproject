@@ -17,6 +17,12 @@ public class RecommendActivity extends AppCompatActivity {
     RecommendAdapter recommendAdapter;
     Context mContext = this;
 
+    String name;
+    String time;
+
+    LocationDB locationDB;
+    PlaceDB placeDB;
+
     /**
      * TODO 같이 가는 사람, 시간으로 분석한 추천 장소 입력.
      * TODO 추가! 반환할 때는 placeName lat, lng 값을 intent 값에 추가한 후 finish.
@@ -26,20 +32,38 @@ public class RecommendActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recommend);
 
+        locationDB = new LocationDB(this);
+        placeDB = new PlaceDB(this);
+
         Intent intent = getIntent();
-        String name = intent.getExtras().getString("personName");
-        String time = intent.getExtras().getString("time");
+        name = intent.getExtras().getString("personName");
+        time = intent.getExtras().getString("time");
         Log.d("RecommendActivity", "personName:"+name+", time:"+time);
 
         ListView recommendList = (ListView) findViewById(R.id.recommendList);
         recommendAdapter = new RecommendAdapter();
-      
+
         //TODO 어댑터에 아이템 추가해야 함.
         //일단 임의로
-        recommendAdapter.addItem(new RecommendItem("name1", 10, "category1", 34.9, 127.5));
-        recommendAdapter.addItem(new RecommendItem("name2", 20, "category2", 36.9, 127.5));
-        recommendAdapter.addItem(new RecommendItem("name3", 30, "category3", 50.9, 127.5));
-        
+        for (LocationInfo locationInfo : locationDB.getAllInfo()) {
+            if (locationInfo.getDate().split(" ")[1].split(":")[0].equals(time)) {
+                for (PlaceInfo placeInfo : placeDB.getAllInfo()) {
+                    if (locationInfo.getLat()==placeInfo.getLat() && locationInfo.getLng() == placeInfo.getLng()) {
+                        recommendAdapter.addItem(new RecommendItem(placeInfo.getName(), 0,placeInfo.getCategory(), placeInfo.getLat(), placeInfo.getLng()));
+                        break;
+                    }
+                }
+
+            } else if (locationInfo.getFriend().equals(name)) {
+                for (PlaceInfo placeInfo : placeDB.getAllInfo()) {
+                    if (locationInfo.getLat()==placeInfo.getLat() && locationInfo.getLng() == placeInfo.getLng()) {
+                        recommendAdapter.addItem(new RecommendItem(placeInfo.getName(), 0,placeInfo.getCategory(), placeInfo.getLat(), placeInfo.getLng()));
+                        break;
+                    }
+                }
+            }
+        }
+
         recommendList.setAdapter(recommendAdapter);
 
         recommendList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

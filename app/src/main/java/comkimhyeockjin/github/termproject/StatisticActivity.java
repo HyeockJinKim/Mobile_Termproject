@@ -113,12 +113,22 @@ public class StatisticActivity extends AppCompatActivity {
         String[] locationName = {"a", "b", "c", "d"};
 
         List<Integer> colors = new ArrayList<Integer>();
-        for (int c : ColorTemplate.PASTEL_COLORS)
+        for (int c : ColorTemplate.MATERIAL_COLORS)
             colors.add(c);
+
+        for (int c : ColorTemplate.LIBERTY_COLORS)
+            colors.add(c);
+
         for (int c : ColorTemplate.COLORFUL_COLORS)
             colors.add(c);
-        for (int c : ColorTemplate.JOYFUL_COLORS)
+
+        for (int c : ColorTemplate.LIBERTY_COLORS)
             colors.add(c);
+
+        for (int c : ColorTemplate.PASTEL_COLORS)
+            colors.add(c);
+
+        colors.add(ColorTemplate.getHoloBlue());
 
         ArrayList<PlaceInfo> placeInfoArrayList = placeDB.getAllInfo();
 

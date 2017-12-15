@@ -26,9 +26,15 @@
             <Spinner
                 android:id="@+id/spinner"
                 android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical">
+                android:layout_height="40dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:textAlignment="center">
             </Spinner>
+
         </TableRow>
         <TableRow>
             <TextView

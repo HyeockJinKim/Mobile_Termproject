@@ -13,22 +13,24 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class RecommendDialog extends Activity {
     int hour, min;
     Button timeBtn;
 
-    String[] spinnerItems = {"혼자", "사람1", "사람2", "사람3"};
     String currentPersonName;
     String currentTime;
     DecimalFormat decimalFormat;
+    LocationDB locationDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ask_dialog);
         this.setTitle("어디로 갈까?");
+        locationDB = new LocationDB(this);
         decimalFormat = new DecimalFormat("00");
         Calendar calendar = Calendar.getInstance();
         hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -36,9 +38,19 @@ public class RecommendDialog extends Activity {
         timeBtn = (Button) findViewById(R.id.timeBtn);
         timeBtn.setText(decimalFormat.format(hour)+"시 "+decimalFormat.format(min) + "분");
         currentTime = hour+":"+min;
+        ArrayList<String> friendList = new ArrayList<>();
+
+        for (LocationInfo locationInfo : locationDB.getAllInfo()) {
+            String friend = locationInfo.getFriend();
+            if (!"".equals(friend)) {
+                if (!friendList.contains(friend)) {
+                    friendList.add(friend);
+                }
+            }
+        }
 
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerItems);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, friendList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -63,7 +75,7 @@ public class RecommendDialog extends Activity {
     public void startRecommendActivity(View v) {
 
         Intent intent = new Intent();
-        // personName, time은 dialog에서 입력받은 값으로...
+        // personName, time 은 dialog 에서 입력받은 값으로...
         String personName = currentPersonName;
         String time = currentTime;
         intent.putExtra("personName", personName);

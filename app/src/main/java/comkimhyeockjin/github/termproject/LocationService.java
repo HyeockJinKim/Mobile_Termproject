@@ -130,9 +130,8 @@ public class LocationService extends Service {
                             intent.putExtra("lat", curLat);
                             intent.putExtra("lng", curLng);
                             intent.putExtra("name", name);
-                            selectCategory(currentPlace.getPlaceTypes().get(0));
 
-                            intent.putExtra("cate", currentPlace.getPlaceTypes().get(0));
+                            intent.putExtra("cate", selectCategory(currentPlace.getPlaceTypes().get(0)));
                             intent.putExtra("date", lastDate);
 
                             startActivity(intent);
@@ -174,10 +173,12 @@ public class LocationService extends Service {
         DEFAULT_ZONE = new LatLng(36.3665928,127.3443893);
     }
 
-    private void selectCategory(int category) {
+    private String selectCategory(int category) {
         switch (category) {
 
+
         }
+        return "";
     }
 
 
